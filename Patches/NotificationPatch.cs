@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace MOAR.Patches
 {
-    internal class NotificationService : ModulePatch
+    public class NotificationPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
@@ -15,6 +15,7 @@ namespace MOAR.Patches
         [PatchPrefix]
         static bool Prefix()
         {
+            if (!Plugin.ShowPresetOnRaidStart.Value) return false;
             var preset = Plugin.GetServerString();
             Plugin.DisplayMessage(preset);
             return true;

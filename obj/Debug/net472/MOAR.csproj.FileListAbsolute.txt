@@ -121,3 +121,4 @@ c:\modTestBed\Dev\MOAR\obj\Debug\net472\MOAR.csproj.CoreCompileInputs.cache
 c:\modTestBed\Dev\MOAR\obj\Debug\net472\MOAR.csproj.Up2Date
 c:\modTestBed\Dev\MOAR\obj\Debug\net472\MOAR.dll
 c:\modTestBed\Dev\MOAR\obj\Debug\net472\MOAR.pdb
+c:\modTestBed\Dev\MOAR\obj\Debug\net472\MOAR.sourcelink.json
