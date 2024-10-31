@@ -3,9 +3,9 @@ using HarmonyLib;
 using SPT.Reflection.Patching;
 using System.Reflection;
 
-namespace MOAR.ExamplePatches
+namespace MOAR.Patches
 {
-    internal class MoarPatch : ModulePatch
+    internal class NotificationService : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
@@ -16,14 +16,8 @@ namespace MOAR.ExamplePatches
         static bool Prefix()
         {
             var preset = Plugin.GetServerString();
-            Plugin.PostMessage(preset);
+            Plugin.DisplayMessage(preset);
             return true;
-        }
-
-        [PatchPostfix]
-        static void Postfix()
-        {
-            // code in Postfix() method runs AFTER the original code is executed
         }
     }
 }

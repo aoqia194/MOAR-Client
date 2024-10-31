@@ -1,1 +1,0 @@
-NotificationManagerClass.DisplayMessageNotification("Message", ENotificationDurationType.Long);
