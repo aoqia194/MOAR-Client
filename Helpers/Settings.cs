@@ -102,21 +102,23 @@ namespace MOAR.Helpers
                 )
             );
 
-            // if (IsFika)
-            CreateSimpleButton(
-                "1. Main Settings",
-                "FIKA DETECTED: ALWAYS DO PRESS THIS FIRST BEFORE MAKING CHANGES!!",
-                "Pull settings from server",
-                "Pulls all server settings from server",
-                () =>
-                {
-                    UpdateServerStoredValues();
-                    UpdateValuesFromServerStoredValues();
-                    Methods.DisplayMessage("Pulled latest settings from servers");
-                    return "";
-                },
-                100
-            );
+            if (IsFika)
+            {
+                CreateSimpleButton(
+                    "1. Main Settings",
+                    "FIKA DETECTED: ALWAYS PRESS THIS FIRST BEFORE MAKING CHANGES!!",
+                    "Pull settings from server",
+                    "Pulls all server settings from server",
+                    () =>
+                    {
+                        UpdateServerStoredValues();
+                        UpdateValuesFromServerStoredValues();
+                        Methods.DisplayMessage("Pulled latest settings from servers");
+                        return "";
+                    },
+                    100
+                );
+            }
 
             // Main SETTINGS =====================================
 
@@ -127,7 +129,8 @@ namespace MOAR.Helpers
                 "Resets all settings to defaults",
                 () =>
                 {
-                    UpdateValuesFromDefaults();
+                    currentPreset.Value = "Random";
+                    UpdateValuesFromDefaults(true);
                     Routers.SetOverrideConfig(ServerStoredDefaults);
                     Methods.DisplayMessage("Reset all settings");
                     return "";
@@ -142,7 +145,10 @@ namespace MOAR.Helpers
                 "Pushes settings to server",
                 () =>
                 {
-                    currentPreset.Value = "Custom";
+                    if (!CustomUnchanged())
+                    {
+                        currentPreset.Value = "Custom";
+                    }
                     OverwriteServerStoredValuesAndSubmit();
                     Methods.DisplayMessage("Pushed latest settings to servers");
                     return "";
@@ -219,7 +225,21 @@ namespace MOAR.Helpers
             );
 
             currentPreset.SettingChanged += OnPresetChange;
-            UpdateValuesFromServerStoredValues();
+            if (IsFika)
+            {
+                currentPreset.Value = Routers.GetCurrentPresetName();
+                UpdateServerStoredValues();
+                UpdateValuesFromServerStoredValues();
+            }
+            else
+            {
+                if (!CustomUnchanged())
+                {
+                    currentPreset.Value = "Custom";
+                }
+                OverwriteServerStoredValuesAndSubmit();
+                Methods.DisplayMessage("Pushed latest settings to servers");
+            }
         }
 
         private static void OverwriteServerStoredValuesAndSubmit()
@@ -256,7 +276,7 @@ namespace MOAR.Helpers
             }
             else
             {
-                UpdateValuesFromDefaults();
+                UpdateValuesFromDefaults(false);
 
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
@@ -265,20 +285,33 @@ namespace MOAR.Helpers
             Routers.SetOverrideConfig(ServerStoredValues);
         }
 
-        private static void UpdateValuesFromDefaults()
+        private static bool CustomUnchanged()
         {
-            scavDifficulty.Value = ServerStoredDefaults.scavDifficulty;
-            pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
+            return defaultScavStartWaveRatio.Value == ServerStoredValues.defaultScavStartWaveRatio
+                && defaultPmcStartWaveRatio.Value == ServerStoredValues.defaultPmcStartWaveRatio
+                && defaultScavWaveMultiplier.Value == ServerStoredValues.defaultScavWaveMultiplier
+                && defaultPmcWaveMultiplier.Value == ServerStoredValues.defaultPmcWaveMultiplier;
+        }
+
+        private static void UpdateValuesFromDefaults(bool updateDifficulty = false)
+        {
+            if (updateDifficulty)
+            {
+                scavDifficulty.Value = ServerStoredDefaults.scavDifficulty;
+                pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
+            }
             defaultScavStartWaveRatio.Value = ServerStoredDefaults.defaultScavStartWaveRatio;
             defaultPmcStartWaveRatio.Value = ServerStoredDefaults.defaultPmcStartWaveRatio;
             defaultScavWaveMultiplier.Value = ServerStoredDefaults.defaultScavWaveMultiplier;
             defaultPmcWaveMultiplier.Value = ServerStoredDefaults.defaultPmcWaveMultiplier;
-            ServerStoredValues = ServerStoredDefaults;
+            ServerStoredValues = Routers.GetDefaultConfig();
         }
 
         private static void UpdateValuesFromServerStoredValues()
         {
             currentPreset.Value = Routers.GetCurrentPresetName();
+            scavDifficulty.Value = ServerStoredValues.scavDifficulty;
+            pmcDifficulty.Value = ServerStoredValues.pmcDifficulty;
             defaultScavStartWaveRatio.Value = ServerStoredValues.defaultScavStartWaveRatio;
             defaultPmcStartWaveRatio.Value = ServerStoredValues.defaultPmcStartWaveRatio;
             defaultScavWaveMultiplier.Value = ServerStoredValues.defaultScavWaveMultiplier;

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MOAR")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5aa8337e796cb57fad3a2cfc127e889b37d52c6a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6229f469c75019c08bcdafd81c8a882161022317")]
 [assembly: System.Reflection.AssemblyProductAttribute("MOAR")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MOAR")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
