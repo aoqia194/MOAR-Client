@@ -1,7 +1,8 @@
-﻿using EFT;
+﻿using System.Reflection;
+using EFT;
 using HarmonyLib;
+using MOAR.Helpers;
 using SPT.Reflection.Patching;
-using System.Reflection;
 
 namespace MOAR.Patches
 {
@@ -15,9 +16,13 @@ namespace MOAR.Patches
         [PatchPrefix]
         static bool Prefix()
         {
-            if (!Plugin.ShowPresetOnRaidStart.Value) return false;
-            var preset = Plugin.GetServerString();
-            Plugin.DisplayMessage(preset);
+            if (!Settings.ShowPresetOnRaidStart.Value)
+                return false;
+
+            Methods.DisplayMessage(
+                "Current preset is " + Routers.GetCurrentPresetName() + ", good luck."
+            );
+
             return true;
         }
     }
