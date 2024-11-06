@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -16,16 +17,40 @@ namespace MOAR.Helpers
         public static ConfigSettings ServerStoredValues;
         public static ConfigSettings ServerStoredDefaults;
 
-        public static ConfigEntry<double> scavDifficulty;
         public static ConfigEntry<double> pmcDifficulty;
+        public static ConfigEntry<double> scavDifficulty;
         public static ConfigEntry<double> defaultScavStartWaveRatio;
-        public static ConfigEntry<double> defaultPmcStartWaveRatio;
+
         public static ConfigEntry<double> defaultScavWaveMultiplier;
-        public static ConfigEntry<double> defaultPmcWaveMultiplier;
 
         // public static ConfigEntry<bool> startingPmcs;
-        public static Preset[] PresetList;
+        public static ConfigEntry<double> defaultPmcStartWaveRatio;
+        public static ConfigEntry<double> defaultPmcWaveMultiplier;
 
+        // ============================================================
+
+
+        public static ConfigEntry<int> defaultMaxBotCap;
+        public static ConfigEntry<int> defaultMaxBotPerZone;
+        public static ConfigEntry<bool> moreScavGroups;
+        public static ConfigEntry<bool> morePmcGroups;
+        public static ConfigEntry<int> defaultGroupMaxPMC;
+        public static ConfigEntry<int> defaultGroupMaxScav;
+        public static ConfigEntry<bool> sniperBuddies;
+        public static ConfigEntry<bool> bossOpenZones;
+        public static ConfigEntry<bool> randomRaiderGroup;
+        public static ConfigEntry<int> randomRaiderGroupChance;
+        public static ConfigEntry<bool> randomRogueGroup;
+        public static ConfigEntry<int> randomRogueGroupChance;
+        public static ConfigEntry<bool> disableBosses;
+        public static ConfigEntry<int> mainBossChanceBuff;
+        public static ConfigEntry<bool> bossInvasion;
+        public static ConfigEntry<int> bossInvasionSpawnChance;
+        public static ConfigEntry<bool> gradualBossInvasion;
+
+        // ============================================================
+
+        public static Preset[] PresetList;
         public static double LastUpdatedServer = 0;
         public static ConfigEntry<string> currentPreset;
 
@@ -273,6 +298,23 @@ namespace MOAR.Helpers
                 defaultPmcStartWaveRatio.Value = ServerStoredValues.defaultPmcStartWaveRatio;
                 defaultScavWaveMultiplier.Value = ServerStoredValues.defaultScavWaveMultiplier;
                 defaultPmcWaveMultiplier.Value = ServerStoredValues.defaultPmcWaveMultiplier;
+                defaultMaxBotCap.Value = ServerStoredValues.defaultMaxBotCap;
+                defaultMaxBotPerZone.Value = ServerStoredValues.defaultMaxBotPerZone;
+                moreScavGroups.Value = ServerStoredValues.moreScavGroups;
+                morePmcGroups.Value = ServerStoredValues.morePmcGroups;
+                defaultGroupMaxPMC.Value = ServerStoredValues.defaultGroupMaxPMC;
+                defaultGroupMaxScav.Value = ServerStoredValues.defaultGroupMaxScav;
+                sniperBuddies.Value = ServerStoredValues.sniperBuddies;
+                bossOpenZones.Value = ServerStoredValues.bossOpenZones;
+                randomRaiderGroup.Value = ServerStoredValues.randomRaiderGroup;
+                randomRaiderGroupChance.Value = ServerStoredValues.randomRaiderGroupChance;
+                randomRogueGroup.Value = ServerStoredValues.randomRogueGroup;
+                randomRogueGroupChance.Value = ServerStoredValues.randomRogueGroupChance;
+                disableBosses.Value = ServerStoredValues.disableBosses;
+                mainBossChanceBuff.Value = ServerStoredValues.mainBossChanceBuff;
+                bossInvasion.Value = ServerStoredValues.bossInvasion;
+                bossInvasionSpawnChance.Value = ServerStoredValues.bossInvasionSpawnChance;
+                gradualBossInvasion.Value = ServerStoredValues.gradualBossInvasion;
             }
             else
             {
@@ -290,7 +332,24 @@ namespace MOAR.Helpers
             return defaultScavStartWaveRatio.Value == ServerStoredValues.defaultScavStartWaveRatio
                 && defaultPmcStartWaveRatio.Value == ServerStoredValues.defaultPmcStartWaveRatio
                 && defaultScavWaveMultiplier.Value == ServerStoredValues.defaultScavWaveMultiplier
-                && defaultPmcWaveMultiplier.Value == ServerStoredValues.defaultPmcWaveMultiplier;
+                && defaultPmcWaveMultiplier.Value == ServerStoredValues.defaultPmcWaveMultiplier
+                && defaultMaxBotCap.Value == ServerStoredValues.defaultMaxBotCap
+                && defaultMaxBotPerZone.Value == ServerStoredValues.defaultMaxBotPerZone
+                && moreScavGroups.Value == ServerStoredValues.moreScavGroups
+                && morePmcGroups.Value == ServerStoredValues.morePmcGroups
+                && defaultGroupMaxPMC.Value == ServerStoredValues.defaultGroupMaxPMC
+                && defaultGroupMaxScav.Value == ServerStoredValues.defaultGroupMaxScav
+                && sniperBuddies.Value == ServerStoredValues.sniperBuddies
+                && bossOpenZones.Value == ServerStoredValues.bossOpenZones
+                && randomRaiderGroup.Value == ServerStoredValues.randomRaiderGroup
+                && randomRaiderGroupChance.Value == ServerStoredValues.randomRaiderGroupChance
+                && randomRogueGroup.Value == ServerStoredValues.randomRogueGroup
+                && randomRogueGroupChance.Value == ServerStoredValues.randomRogueGroupChance
+                && disableBosses.Value == ServerStoredValues.disableBosses
+                && mainBossChanceBuff.Value == ServerStoredValues.mainBossChanceBuff
+                && bossInvasion.Value == ServerStoredValues.bossInvasion
+                && bossInvasionSpawnChance.Value == ServerStoredValues.bossInvasionSpawnChance
+                && gradualBossInvasion.Value == ServerStoredValues.gradualBossInvasion;
         }
 
         private static void UpdateValuesFromDefaults(bool updateDifficulty = false)
@@ -300,10 +359,28 @@ namespace MOAR.Helpers
                 scavDifficulty.Value = ServerStoredDefaults.scavDifficulty;
                 pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
             }
+
             defaultScavStartWaveRatio.Value = ServerStoredDefaults.defaultScavStartWaveRatio;
             defaultPmcStartWaveRatio.Value = ServerStoredDefaults.defaultPmcStartWaveRatio;
             defaultScavWaveMultiplier.Value = ServerStoredDefaults.defaultScavWaveMultiplier;
             defaultPmcWaveMultiplier.Value = ServerStoredDefaults.defaultPmcWaveMultiplier;
+            defaultMaxBotCap.Value = ServerStoredDefaults.defaultMaxBotCap;
+            defaultMaxBotPerZone.Value = ServerStoredDefaults.defaultMaxBotPerZone;
+            moreScavGroups.Value = ServerStoredDefaults.moreScavGroups;
+            morePmcGroups.Value = ServerStoredDefaults.morePmcGroups;
+            defaultGroupMaxPMC.Value = ServerStoredDefaults.defaultGroupMaxPMC;
+            defaultGroupMaxScav.Value = ServerStoredDefaults.defaultGroupMaxScav;
+            sniperBuddies.Value = ServerStoredDefaults.sniperBuddies;
+            bossOpenZones.Value = ServerStoredDefaults.bossOpenZones;
+            randomRaiderGroup.Value = ServerStoredDefaults.randomRaiderGroup;
+            randomRaiderGroupChance.Value = ServerStoredDefaults.randomRaiderGroupChance;
+            randomRogueGroup.Value = ServerStoredDefaults.randomRogueGroup;
+            randomRogueGroupChance.Value = ServerStoredDefaults.randomRogueGroupChance;
+            disableBosses.Value = ServerStoredDefaults.disableBosses;
+            mainBossChanceBuff.Value = ServerStoredDefaults.mainBossChanceBuff;
+            bossInvasion.Value = ServerStoredDefaults.bossInvasion;
+            bossInvasionSpawnChance.Value = ServerStoredDefaults.bossInvasionSpawnChance;
+            gradualBossInvasion.Value = ServerStoredDefaults.gradualBossInvasion;
             ServerStoredValues = Routers.GetDefaultConfig();
         }
 
@@ -316,6 +393,23 @@ namespace MOAR.Helpers
             defaultPmcStartWaveRatio.Value = ServerStoredValues.defaultPmcStartWaveRatio;
             defaultScavWaveMultiplier.Value = ServerStoredValues.defaultScavWaveMultiplier;
             defaultPmcWaveMultiplier.Value = ServerStoredValues.defaultPmcWaveMultiplier;
+            defaultMaxBotCap.Value = ServerStoredValues.defaultMaxBotCap;
+            defaultMaxBotPerZone.Value = ServerStoredValues.defaultMaxBotPerZone;
+            moreScavGroups.Value = ServerStoredValues.moreScavGroups;
+            morePmcGroups.Value = ServerStoredValues.morePmcGroups;
+            defaultGroupMaxPMC.Value = ServerStoredValues.defaultGroupMaxPMC;
+            defaultGroupMaxScav.Value = ServerStoredValues.defaultGroupMaxScav;
+            sniperBuddies.Value = ServerStoredValues.sniperBuddies;
+            bossOpenZones.Value = ServerStoredValues.bossOpenZones;
+            randomRaiderGroup.Value = ServerStoredValues.randomRaiderGroup;
+            randomRaiderGroupChance.Value = ServerStoredValues.randomRaiderGroupChance;
+            randomRogueGroup.Value = ServerStoredValues.randomRogueGroup;
+            randomRogueGroupChance.Value = ServerStoredValues.randomRogueGroupChance;
+            disableBosses.Value = ServerStoredValues.disableBosses;
+            mainBossChanceBuff.Value = ServerStoredValues.mainBossChanceBuff;
+            bossInvasion.Value = ServerStoredValues.bossInvasion;
+            bossInvasionSpawnChance.Value = ServerStoredValues.bossInvasionSpawnChance;
+            gradualBossInvasion.Value = ServerStoredValues.gradualBossInvasion;
         }
 
         private static void OnPresetChange(object sender, EventArgs e)
