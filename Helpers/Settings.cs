@@ -146,23 +146,6 @@ namespace MOAR.Helpers
             }
 
             // Main SETTINGS =====================================
-
-            CreateSimpleButton(
-                "2. Custom game Settings",
-                "Reset",
-                "Reset all settings to defaults",
-                "Resets all settings to defaults",
-                () =>
-                {
-                    currentPreset.Value = "Random";
-                    UpdateValuesFromDefaults(true);
-                    Routers.SetOverrideConfig(ServerStoredDefaults);
-                    Methods.DisplayMessage("Reset all settings");
-                    return "";
-                },
-                95
-            );
-
             CreateSimpleButton(
                 "2. Custom game Settings",
                 "Save the above changes",
@@ -178,7 +161,303 @@ namespace MOAR.Helpers
                     Methods.DisplayMessage("Pushed latest settings to servers");
                     return "";
                 },
-                96
+                79
+            );
+
+            CreateSimpleButton(
+                "2. Custom game Settings",
+                "Reset",
+                "Reset all settings to defaults",
+                "Resets all settings to defaults",
+                () =>
+                {
+                    currentPreset.Value = "Random";
+                    UpdateValuesFromDefaults(true);
+                    Routers.SetOverrideConfig(ServerStoredDefaults);
+                    Methods.DisplayMessage("Reset all settings");
+                    return "";
+                },
+                80
+            );
+
+            gradualBossInvasion = Config.Bind(
+                "2. Custom game Settings",
+                "gradualBossInvasion On/Off",
+                ServerStoredDefaults.gradualBossInvasion,
+                new ConfigDescription(
+                    "Makes it so invading bosses do not spawn all at the beginning (recommend for performance)",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.gradualBossInvasion,
+                        Order = 81,
+                    }
+                )
+            );
+
+            bossInvasionSpawnChance = Config.Bind(
+                "2. Custom game Settings",
+                "bossInvasionSpawnChance",
+                ServerStoredDefaults.bossInvasionSpawnChance,
+                new ConfigDescription(
+                    "Percentage chance of each invading boss spawning.",
+                    new AcceptableValueRange<int>(0, 100),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = true,
+                        DefaultValue = ServerStoredDefaults.bossInvasionSpawnChance,
+                        Order = 82,
+                    }
+                )
+            );
+
+            bossInvasion = Config.Bind(
+                "2. Custom game Settings",
+                "bossInvasion On/Off",
+                ServerStoredDefaults.bossInvasion,
+                new ConfigDescription(
+                    "Allows the main bosses (not knight,rogues,raiders) to invade other maps with a reduced retinue, by default they will spawn in native boss locations",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.bossInvasion,
+                        Order = 83,
+                    }
+                )
+            );
+
+            mainBossChanceBuff = Config.Bind(
+                "2. Custom game Settings",
+                "mainBossChanceBuff",
+                ServerStoredDefaults.mainBossChanceBuff,
+                new ConfigDescription(
+                    "Increases the spawn chance of the single 'main' boss on each map by this percentage",
+                    new AcceptableValueRange<int>(0, 100),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = true,
+                        DefaultValue = ServerStoredDefaults.mainBossChanceBuff,
+                        Order = 84,
+                    }
+                )
+            );
+
+            disableBosses = Config.Bind(
+                "2. Custom game Settings",
+                "disableBosses On/Off",
+                ServerStoredDefaults.disableBosses,
+                new ConfigDescription(
+                    "Disables all bosses, good for debugging.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.disableBosses,
+                        Order = 85,
+                    }
+                )
+            );
+
+            randomRogueGroupChance = Config.Bind(
+                "2. Custom game Settings",
+                "randomRogueGroupChance",
+                ServerStoredDefaults.randomRogueGroupChance,
+                new ConfigDescription(
+                    "Chance of a rogue group spawning",
+                    new AcceptableValueRange<int>(0, 100),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = true,
+                        DefaultValue = ServerStoredDefaults.randomRogueGroupChance,
+                        Order = 86,
+                    }
+                )
+            );
+
+            randomRogueGroup = Config.Bind(
+                "2. Custom game Settings",
+                "randomRogueGroup On/Off",
+                ServerStoredDefaults.randomRogueGroup,
+                new ConfigDescription(
+                    "Experimental: Makes it so a randomRogueGroup can spawn anywhere",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.randomRogueGroup,
+                        Order = 87,
+                    }
+                )
+            );
+
+            randomRaiderGroupChance = Config.Bind(
+                "2. Custom game Settings",
+                "randomRaiderGroupChance",
+                ServerStoredDefaults.randomRaiderGroupChance,
+                new ConfigDescription(
+                    "Chance of a raider group spawning",
+                    new AcceptableValueRange<int>(0, 100),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = true,
+                        DefaultValue = ServerStoredDefaults.randomRaiderGroupChance,
+                        Order = 88,
+                    }
+                )
+            );
+
+            randomRaiderGroup = Config.Bind(
+                "2. Custom game Settings",
+                "randomRaiderGroup On/Off",
+                ServerStoredDefaults.randomRaiderGroup,
+                new ConfigDescription(
+                    "Experimental: Makes it so a randomRaiderGroup can spawn anywhere",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.randomRaiderGroup,
+                        Order = 89,
+                    }
+                )
+            );
+
+            bossOpenZones = Config.Bind(
+                "2. Custom game Settings",
+                "bossOpenZones On/Off",
+                ServerStoredDefaults.bossOpenZones,
+                new ConfigDescription(
+                    "Experimental: Makes it so the main bosses can spawn anywhere",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.bossOpenZones,
+                        Order = 90,
+                    }
+                )
+            );
+
+            sniperBuddies = Config.Bind(
+                "2. Custom game Settings",
+                "sniperBuddies On/Off",
+                ServerStoredDefaults.sniperBuddies,
+                new ConfigDescription(
+                    "Gives snipers a chance of spawning with a friend :)",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.sniperBuddies,
+                        Order = 91,
+                    }
+                )
+            );
+
+            defaultGroupMaxScav = Config.Bind(
+                "2. Custom game Settings",
+                "defaultGroupMaxScav",
+                ServerStoredDefaults.defaultGroupMaxScav,
+                new ConfigDescription(
+                    "Max scav group size",
+                    new AcceptableValueRange<int>(0, 10),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.defaultGroupMaxScav,
+                        Order = 92,
+                    }
+                )
+            );
+
+            defaultGroupMaxPMC = Config.Bind(
+                "2. Custom game Settings",
+                "defaultGroupMaxPMC",
+                ServerStoredDefaults.defaultGroupMaxPMC,
+                new ConfigDescription(
+                    "Max pmc group size",
+                    new AcceptableValueRange<int>(0, 10),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.defaultGroupMaxPMC,
+                        Order = 93,
+                    }
+                )
+            );
+
+            morePmcGroups = Config.Bind(
+                "2. Custom game Settings",
+                "morePmcGroups On/Off",
+                ServerStoredDefaults.morePmcGroups,
+                new ConfigDescription(
+                    "Increases chances of pmc groups spawning, doesn't dramatically increase quantity.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.morePmcGroups,
+                        Order = 94,
+                    }
+                )
+            );
+
+            moreScavGroups = Config.Bind(
+                "2. Custom game Settings",
+                "moreScavGroups On/Off",
+                ServerStoredDefaults.moreScavGroups,
+                new ConfigDescription(
+                    "Increases chances of scav groups spawning, doesn't dramatically increase quantity.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.moreScavGroups,
+                        Order = 95,
+                    }
+                )
+            );
+
+            defaultMaxBotPerZone = Config.Bind(
+                "2. Custom game Settings",
+                "MaxBotPerZone",
+                ServerStoredDefaults.defaultMaxBotPerZone,
+                new ConfigDescription(
+                    "Max bots permitted in any particular spawn zone, recommend not to touch this.",
+                    new AcceptableValueRange<int>(0, 15),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.defaultMaxBotPerZone,
+                        Order = 96,
+                    }
+                )
+            );
+
+            defaultMaxBotCap = Config.Bind(
+                "2. Custom game Settings",
+                "MaxBotCap",
+                ServerStoredDefaults.defaultMaxBotCap,
+                new ConfigDescription(
+                    "Max bots alive at one time",
+                    new AcceptableValueRange<int>(0, 50),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.defaultMaxBotCap,
+                        Order = 97,
+                    }
+                )
             );
 
             defaultScavStartWaveRatio = Config.Bind(
@@ -210,7 +489,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.defaultPmcStartWaveRatio,
-                        Order = 97,
+                        Order = 99,
                     }
                 )
             );
@@ -244,12 +523,13 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.defaultPmcWaveMultiplier,
-                        Order = 99,
+                        Order = 101,
                     }
                 )
             );
 
             currentPreset.SettingChanged += OnPresetChange;
+
             if (IsFika)
             {
                 currentPreset.Value = Routers.GetCurrentPresetName();
@@ -292,29 +572,23 @@ namespace MOAR.Helpers
                     1
                 );
 
-                scavDifficulty.Value = ServerStoredValues.scavDifficulty;
-                pmcDifficulty.Value = ServerStoredValues.pmcDifficulty;
-                defaultScavStartWaveRatio.Value = ServerStoredValues.defaultScavStartWaveRatio;
-                defaultPmcStartWaveRatio.Value = ServerStoredValues.defaultPmcStartWaveRatio;
-                defaultScavWaveMultiplier.Value = ServerStoredValues.defaultScavWaveMultiplier;
-                defaultPmcWaveMultiplier.Value = ServerStoredValues.defaultPmcWaveMultiplier;
-                defaultMaxBotCap.Value = ServerStoredValues.defaultMaxBotCap;
-                defaultMaxBotPerZone.Value = ServerStoredValues.defaultMaxBotPerZone;
-                moreScavGroups.Value = ServerStoredValues.moreScavGroups;
-                morePmcGroups.Value = ServerStoredValues.morePmcGroups;
-                defaultGroupMaxPMC.Value = ServerStoredValues.defaultGroupMaxPMC;
-                defaultGroupMaxScav.Value = ServerStoredValues.defaultGroupMaxScav;
-                sniperBuddies.Value = ServerStoredValues.sniperBuddies;
-                bossOpenZones.Value = ServerStoredValues.bossOpenZones;
-                randomRaiderGroup.Value = ServerStoredValues.randomRaiderGroup;
-                randomRaiderGroupChance.Value = ServerStoredValues.randomRaiderGroupChance;
-                randomRogueGroup.Value = ServerStoredValues.randomRogueGroup;
-                randomRogueGroupChance.Value = ServerStoredValues.randomRogueGroupChance;
-                disableBosses.Value = ServerStoredValues.disableBosses;
-                mainBossChanceBuff.Value = ServerStoredValues.mainBossChanceBuff;
-                bossInvasion.Value = ServerStoredValues.bossInvasion;
-                bossInvasionSpawnChance.Value = ServerStoredValues.bossInvasionSpawnChance;
-                gradualBossInvasion.Value = ServerStoredValues.gradualBossInvasion;
+                ServerStoredValues.defaultMaxBotCap = defaultMaxBotCap.Value;
+                ServerStoredValues.defaultMaxBotPerZone = defaultMaxBotPerZone.Value;
+                ServerStoredValues.moreScavGroups = moreScavGroups.Value;
+                ServerStoredValues.morePmcGroups = morePmcGroups.Value;
+                ServerStoredValues.defaultGroupMaxPMC = defaultGroupMaxPMC.Value;
+                ServerStoredValues.defaultGroupMaxScav = defaultGroupMaxScav.Value;
+                ServerStoredValues.sniperBuddies = sniperBuddies.Value;
+                ServerStoredValues.bossOpenZones = bossOpenZones.Value;
+                ServerStoredValues.randomRaiderGroup = randomRaiderGroup.Value;
+                ServerStoredValues.randomRaiderGroupChance = randomRaiderGroupChance.Value;
+                ServerStoredValues.randomRogueGroup = randomRogueGroup.Value;
+                ServerStoredValues.randomRogueGroupChance = randomRogueGroupChance.Value;
+                ServerStoredValues.disableBosses = disableBosses.Value;
+                ServerStoredValues.mainBossChanceBuff = mainBossChanceBuff.Value;
+                ServerStoredValues.bossInvasion = bossInvasion.Value;
+                ServerStoredValues.bossInvasionSpawnChance = bossInvasionSpawnChance.Value;
+                ServerStoredValues.gradualBossInvasion = gradualBossInvasion.Value;
             }
             else
             {
@@ -416,7 +690,7 @@ namespace MOAR.Helpers
         {
             var current = Array.Find(PresetList, (item) => item.Name == currentPreset.Value).Label;
             var result = Routers.SetPreset(current);
-            Methods.DisplayMessage("Updated, preset set to: " + result);
+            Methods.DisplayMessage(result);
             if (current != "custom")
             {
                 OverwriteServerStoredValuesAndSubmit();
