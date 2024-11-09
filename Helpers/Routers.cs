@@ -14,6 +14,21 @@ namespace MOAR.Helpers
             return req;
         }
 
+        public static string GetAnnouncePresetLabel()
+        {
+            var req = SPT.Common.Http.RequestHandler.GetJson("/moar/announcePreset");
+            return req;
+        }
+
+        public static string GetAnnouncePresetName()
+        {
+            var preset = GetAnnouncePresetLabel();
+
+            var result = Array.Find(Settings.PresetList, (item) => item.Label.Equals(preset))?.Name;
+
+            return result;
+        }
+
         public static string GetCurrentPresetName()
         {
             var preset = GetCurrentPresetLabel();

@@ -20,7 +20,7 @@ namespace MOAR.Patches
                 return false;
 
             Methods.DisplayMessage(
-                "Current preset is " + Routers.GetCurrentPresetName() + ", good luck."
+                "Current preset is " + Routers.GetAnnouncePresetName() + ", good luck."
             );
 
             return true;
