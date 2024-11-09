@@ -153,11 +153,12 @@ namespace MOAR.Helpers
                 "Pushes settings to server",
                 () =>
                 {
-                    if (!CustomUnchanged())
+                    if (currentPreset.Value != "Custom" && !CustomUnchanged())
                     {
                         currentPreset.Value = "Custom";
                     }
                     OverwriteServerStoredValuesAndSubmit();
+                    UpdateValuesFromServerStoredValues();
                     Methods.DisplayMessage("Pushed latest settings to servers");
                     return "";
                 },
