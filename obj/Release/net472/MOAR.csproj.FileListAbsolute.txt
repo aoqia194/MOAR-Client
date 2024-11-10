@@ -121,3 +121,4 @@ c:\modTestBed\Dev\MOAR\bin\Release\net472\BepInEx.xml
 c:\modTestBed\Dev\MOAR\bin\Release\net472\MonoMod.Utils.xml
 c:\modTestBed\Dev\MOAR\bin\Release\net472\MonoMod.RuntimeDetour.xml
 c:\modTestBed\Dev\MOAR\obj\Release\net472\MOAR.csproj.Up2Date
+c:\modTestBed\Dev\MOAR\obj\Release\net472\MOAR.sourcelink.json

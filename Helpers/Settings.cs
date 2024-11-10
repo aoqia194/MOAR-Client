@@ -127,6 +127,13 @@ namespace MOAR.Helpers
                 )
             );
 
+            // ShowPresetOnRaidStart.SettingChanged += (a, b) =>
+            // {
+            //     Methods.DisplayMessage(
+            //         "Current preset is " + Routers.GetAnnouncePresetName() + ", good luck."
+            //     );
+            // };
+
             if (IsFika)
             {
                 CreateSimpleButton(
@@ -533,7 +540,6 @@ namespace MOAR.Helpers
 
             if (IsFika)
             {
-                currentPreset.Value = Routers.GetCurrentPresetName();
                 UpdateServerStoredValues();
                 UpdateValuesFromServerStoredValues();
             }
