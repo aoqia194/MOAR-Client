@@ -27,9 +27,6 @@ namespace MOAR.Helpers
         public static ConfigEntry<double> defaultPmcStartWaveRatio;
         public static ConfigEntry<double> defaultPmcWaveMultiplier;
 
-        // ============================================================
-
-
         public static ConfigEntry<int> defaultMaxBotCap;
         public static ConfigEntry<int> defaultMaxBotPerZone;
         public static ConfigEntry<bool> moreScavGroups;
@@ -47,8 +44,6 @@ namespace MOAR.Helpers
         public static ConfigEntry<bool> bossInvasion;
         public static ConfigEntry<int> bossInvasionSpawnChance;
         public static ConfigEntry<bool> gradualBossInvasion;
-
-        // ============================================================
 
         public static Preset[] PresetList;
         public static double LastUpdatedServer = 0;
@@ -107,12 +102,7 @@ namespace MOAR.Helpers
                 new ConfigDescription(
                     "Preset to be used, default pulls a random weighted preset from the config.",
                     new AcceptableValueList<string>(PresetList.Select(item => item.Name).ToArray()),
-                    new ConfigurationManagerAttributes
-                    {
-                        DefaultValue = "Random",
-                        ShowRangeAsPercent = false,
-                        Order = 98,
-                    }
+                    new ConfigurationManagerAttributes { ShowRangeAsPercent = false, Order = 98 }
                 )
             );
 
@@ -545,12 +535,18 @@ namespace MOAR.Helpers
             }
             else
             {
+                if (currentPreset.Value != null)
+                {
+                    var current = Array
+                        .Find(PresetList, (item) => item.Name == currentPreset.Value)
+                        .Label;
+                    var result = Routers.SetPreset(current);
+                }
                 if (!CustomUnchanged())
                 {
                     currentPreset.Value = "Custom";
                 }
                 OverwriteServerStoredValuesAndSubmit();
-                Methods.DisplayMessage("Pushed latest settings to servers");
             }
         }
 
