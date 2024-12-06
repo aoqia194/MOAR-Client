@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\modTestBed\\Dev\\MOAR\\MOAR.csproj",
+      "projectUniqueName": "c:\\310\\Dev\\MOAR\\MOAR.csproj",
       "projectName": "MOAR",
-      "projectPath": "C:\\modTestBed\\Dev\\MOAR\\MOAR.csproj",
+      "projectPath": "c:\\310\\Dev\\MOAR\\MOAR.csproj",
       "packagesPath": "C:\\Users\\Andrew\\.nuget\\packages\\",
-      "outputPath": "C:\\modTestBed\\Dev\\MOAR\\obj\\",
+      "outputPath": "c:\\310\\Dev\\MOAR\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Andrew\\AppData\\Roaming\\NuGet\\NuGet.Config"
