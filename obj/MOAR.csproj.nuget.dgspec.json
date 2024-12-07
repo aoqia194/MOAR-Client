@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\310\\Dev\\MOAR\\MOAR.csproj": {}
+    "C:\\310\\dev\\MOAR\\MOAR.csproj": {}
   },
   "projects": {
-    "c:\\310\\Dev\\MOAR\\MOAR.csproj": {
+    "C:\\310\\dev\\MOAR\\MOAR.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\310\\Dev\\MOAR\\MOAR.csproj",
+        "projectUniqueName": "C:\\310\\dev\\MOAR\\MOAR.csproj",
         "projectName": "MOAR",
-        "projectPath": "c:\\310\\Dev\\MOAR\\MOAR.csproj",
+        "projectPath": "C:\\310\\dev\\MOAR\\MOAR.csproj",
         "packagesPath": "C:\\Users\\Andrew\\.nuget\\packages\\",
-        "outputPath": "c:\\310\\Dev\\MOAR\\obj\\",
+        "outputPath": "C:\\310\\dev\\MOAR\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Andrew\\AppData\\Roaming\\NuGet\\NuGet.Config"

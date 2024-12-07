@@ -365,3 +365,5 @@ FodyWeavers.xsd
 
 # SPT Build Script
 ServerMod/dist
+
+bin
