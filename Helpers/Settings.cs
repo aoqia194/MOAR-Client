@@ -602,6 +602,8 @@ namespace MOAR.Helpers
             }
 
             Routers.SetOverrideConfig(ServerStoredValues);
+
+            Methods.RefreshLocationInfo();
         }
 
         private static bool CustomUnchanged()

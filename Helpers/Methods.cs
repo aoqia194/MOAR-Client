@@ -1,4 +1,9 @@
+using System.Threading.Tasks;
+using Comfort.Common;
+using EFT;
 using EFT.Communications;
+using SPT.Reflection.Utils;
+using UnityEngine;
 
 namespace MOAR.Helpers
 {
@@ -11,6 +16,11 @@ namespace MOAR.Helpers
                 ENotificationDurationType.Long,
                 ENotificationIconType.EntryPoint
             );
+        }
+
+        public static async void RefreshLocationInfo()
+        {
+            await PatchConstants.BackEndSession.GetLevelSettings();
         }
     }
 }
