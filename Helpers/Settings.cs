@@ -16,9 +16,14 @@ namespace MOAR.Helpers
         public static bool IsFika = false;
         public static ConfigSettings ServerStoredValues;
         public static ConfigSettings ServerStoredDefaults;
-
+        public static ConfigEntry<bool> debug;
         public static ConfigEntry<double> pmcDifficulty;
         public static ConfigEntry<double> scavDifficulty;
+
+        public static ConfigEntry<bool> zombiesEnabled;
+        public static ConfigEntry<double> zombieWaveDistribution;
+        public static ConfigEntry<double> zombieWaveQuantity;
+        public static ConfigEntry<double> zombieHealth;
         public static ConfigEntry<double> scavWaveDistribution;
 
         public static ConfigEntry<double> scavWaveQuantity;
@@ -159,7 +164,7 @@ namespace MOAR.Helpers
                     Methods.DisplayMessage("Pushed latest settings to servers");
                     return "";
                 },
-                79
+                75
             );
 
             CreateSimpleButton(
@@ -175,7 +180,7 @@ namespace MOAR.Helpers
                     Methods.DisplayMessage("Reset all settings");
                     return "";
                 },
-                80
+                76
             );
 
             gradualBossInvasion = Config.Bind(
@@ -189,7 +194,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.gradualBossInvasion,
-                        Order = 81,
+                        Order = 77,
                     }
                 )
             );
@@ -206,7 +211,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = true,
                         DefaultValue = ServerStoredDefaults.bossInvasionSpawnChance,
-                        Order = 82,
+                        Order = 78,
                     }
                 )
             );
@@ -222,7 +227,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.bossInvasion,
-                        Order = 83,
+                        Order = 79,
                     }
                 )
             );
@@ -239,7 +244,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = true,
                         DefaultValue = ServerStoredDefaults.mainBossChanceBuff,
-                        Order = 84,
+                        Order = 80,
                     }
                 )
             );
@@ -255,7 +260,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.disableBosses,
-                        Order = 85,
+                        Order = 81,
                     }
                 )
             );
@@ -272,7 +277,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = true,
                         DefaultValue = ServerStoredDefaults.randomRogueGroupChance,
-                        Order = 86,
+                        Order = 82,
                     }
                 )
             );
@@ -288,7 +293,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.randomRogueGroup,
-                        Order = 87,
+                        Order = 83,
                     }
                 )
             );
@@ -305,7 +310,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = true,
                         DefaultValue = ServerStoredDefaults.randomRaiderGroupChance,
-                        Order = 88,
+                        Order = 84,
                     }
                 )
             );
@@ -321,7 +326,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.randomRaiderGroup,
-                        Order = 89,
+                        Order = 85,
                     }
                 )
             );
@@ -337,7 +342,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.bossOpenZones,
-                        Order = 90,
+                        Order = 86,
                     }
                 )
             );
@@ -353,7 +358,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.snipersHaveFriends,
-                        Order = 91,
+                        Order = 87,
                     }
                 )
             );
@@ -370,7 +375,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.scavMaxGroupSize,
-                        Order = 92,
+                        Order = 88,
                     }
                 )
             );
@@ -387,7 +392,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.pmcMaxGroupSize,
-                        Order = 93,
+                        Order = 89,
                     }
                 )
             );
@@ -403,7 +408,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.morePmcGroups,
-                        Order = 94,
+                        Order = 90,
                     }
                 )
             );
@@ -419,7 +424,7 @@ namespace MOAR.Helpers
                     {
                         IsAdvanced = false,
                         DefaultValue = ServerStoredDefaults.moreScavGroups,
-                        Order = 95,
+                        Order = 91,
                     }
                 )
             );
@@ -436,7 +441,7 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.maxBotPerZone,
-                        Order = 96,
+                        Order = 92,
                     }
                 )
             );
@@ -453,6 +458,73 @@ namespace MOAR.Helpers
                         IsAdvanced = false,
                         ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.maxBotCap,
+                        Order = 93,
+                    }
+                )
+            );
+
+            zombieHealth = Config.Bind(
+                "2. Custom game Settings",
+                "ZombieHealth",
+                ServerStoredDefaults.zombieHealth,
+                new ConfigDescription(
+                    "This controls the health of zombies",
+                    new AcceptableValueRange<double>(0, 3),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.zombieHealth,
+                        Order = 94,
+                    }
+                )
+            );
+
+            zombieWaveQuantity = Config.Bind(
+                "2. Custom game Settings",
+                "ZombieWaveQuantity",
+                ServerStoredDefaults.zombieWaveQuantity,
+                new ConfigDescription(
+                    "Multiplies wave counts seen in the server's mapConfig.json by this number",
+                    new AcceptableValueRange<double>(0, 10),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.zombieWaveQuantity,
+                        Order = 95,
+                    }
+                )
+            );
+
+            zombieWaveDistribution = Config.Bind(
+                "2. Custom game Settings",
+                "ZombieWaveDistribution",
+                ServerStoredDefaults.zombieWaveDistribution,
+                new ConfigDescription(
+                    "Determines the weighting of spawns at the beginning (1) spread evenly throughout (0.5) or at the end(0) of the raid",
+                    new AcceptableValueRange<double>(0, 1),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.zombieWaveDistribution,
+                        Order = 96,
+                    }
+                )
+            );
+
+            zombiesEnabled = Config.Bind(
+                "2. Custom game Settings",
+                "zombiesEnabled On/Off",
+                ServerStoredDefaults.zombiesEnabled,
+                new ConfigDescription(
+                    "Enables zombies to spawn",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.zombiesEnabled,
                         Order = 97,
                     }
                 )
@@ -460,10 +532,10 @@ namespace MOAR.Helpers
 
             scavWaveDistribution = Config.Bind(
                 "2. Custom game Settings",
-                "ScavStartWaveRatio",
+                "ScavWaveDistribution",
                 ServerStoredDefaults.scavWaveDistribution,
                 new ConfigDescription(
-                    "Determines the weighting of spawns at the beginning (0) spread evenly throughout (0.5) or at the end(1) of the raid",
+                    "Determines the weighting of spawns at the beginning (1) spread evenly throughout (0.5) or at the end(0) of the raid",
                     new AcceptableValueRange<double>(0, 1),
                     new ConfigurationManagerAttributes
                     {
@@ -477,10 +549,10 @@ namespace MOAR.Helpers
 
             pmcWaveDistribution = Config.Bind(
                 "2. Custom game Settings",
-                "PmcStartWaveRatio",
+                "PmcWaveDistribution",
                 ServerStoredDefaults.pmcWaveDistribution,
                 new ConfigDescription(
-                    "Determines the weighting of spawns at the beginning (0) spread evenly throughout (0.5) or at the end(1) of the raid",
+                    "Determines the weighting of spawns at the beginning (1) spread evenly throughout (0.5) or at the end(0) of the raid",
                     new AcceptableValueRange<double>(0, 1),
                     new ConfigurationManagerAttributes
                     {
@@ -494,10 +566,10 @@ namespace MOAR.Helpers
 
             scavWaveQuantity = Config.Bind(
                 "2. Custom game Settings",
-                "ScavWaveMultiplier",
+                "ScavWaveQuantity",
                 ServerStoredDefaults.scavWaveQuantity,
                 new ConfigDescription(
-                    "Multiplies base waves by this number",
+                    "Multiplies wave counts seen in the server's mapConfig.json by this number",
                     new AcceptableValueRange<double>(0, 10),
                     new ConfigurationManagerAttributes
                     {
@@ -511,10 +583,10 @@ namespace MOAR.Helpers
 
             pmcWaveQuantity = Config.Bind(
                 "2. Custom game Settings",
-                "PmcWaveMultiplier",
+                "PmcWaveQuantity",
                 ServerStoredDefaults.pmcWaveQuantity,
                 new ConfigDescription(
-                    "Multiplies base waves by this number",
+                    "Multiplies wave counts seen in the server's mapConfig.json by this number",
                     new AcceptableValueRange<double>(0, 10),
                     new ConfigurationManagerAttributes
                     {
@@ -522,6 +594,22 @@ namespace MOAR.Helpers
                         ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.pmcWaveQuantity,
                         Order = 101,
+                    }
+                )
+            );
+
+            debug = Config.Bind(
+                "3.Debug",
+                "debug On/Off",
+                ServerStoredDefaults.debug,
+                new ConfigDescription(
+                    "This is for debugging server output, leave off if you don't know what you're doing",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        DefaultValue = ServerStoredDefaults.debug,
+                        Order = 100,
                     }
                 )
             );
@@ -556,24 +644,20 @@ namespace MOAR.Helpers
             {
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
+                ServerStoredValues.debug = debug.Value;
 
-                ServerStoredValues.scavWaveDistribution = Math.Round(
-                    scavWaveDistribution.Value,
+                ServerStoredValues.zombiesEnabled = zombiesEnabled.Value;
+                ServerStoredValues.zombieHealth = Math.Round(zombieHealth.Value, 1);
+                ServerStoredValues.zombieWaveQuantity = Math.Round(zombieWaveQuantity.Value, 1);
+                ServerStoredValues.zombieWaveDistribution = Math.Round(
+                    zombieWaveDistribution.Value,
                     1
                 );
+                ServerStoredValues.scavWaveDistribution = Math.Round(scavWaveDistribution.Value, 1);
 
-                ServerStoredValues.pmcWaveDistribution = Math.Round(
-                    pmcWaveDistribution.Value,
-                    1
-                );
-                ServerStoredValues.pmcWaveQuantity = Math.Round(
-                    pmcWaveQuantity.Value,
-                    1
-                );
-                ServerStoredValues.scavWaveQuantity = Math.Round(
-                    scavWaveQuantity.Value,
-                    1
-                );
+                ServerStoredValues.pmcWaveDistribution = Math.Round(pmcWaveDistribution.Value, 1);
+                ServerStoredValues.pmcWaveQuantity = Math.Round(pmcWaveQuantity.Value, 1);
+                ServerStoredValues.scavWaveQuantity = Math.Round(scavWaveQuantity.Value, 1);
 
                 ServerStoredValues.maxBotCap = maxBotCap.Value;
                 ServerStoredValues.maxBotPerZone = maxBotPerZone.Value;
@@ -596,7 +680,7 @@ namespace MOAR.Helpers
             else
             {
                 UpdateValuesFromDefaults(false);
-
+                ServerStoredValues.debug = debug.Value;
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
             }
@@ -608,7 +692,11 @@ namespace MOAR.Helpers
 
         private static bool CustomUnchanged()
         {
-            return scavWaveDistribution.Value == ServerStoredValues.scavWaveDistribution
+            return zombieHealth.Value == ServerStoredValues.zombieHealth
+                && zombiesEnabled.Value == ServerStoredValues.zombiesEnabled
+                && zombieWaveDistribution.Value == ServerStoredValues.zombieWaveDistribution
+                && zombieWaveQuantity.Value == ServerStoredValues.zombieWaveQuantity
+                && scavWaveDistribution.Value == ServerStoredValues.scavWaveDistribution
                 && pmcWaveDistribution.Value == ServerStoredValues.pmcWaveDistribution
                 && scavWaveQuantity.Value == ServerStoredValues.scavWaveQuantity
                 && pmcWaveQuantity.Value == ServerStoredValues.pmcWaveQuantity
@@ -637,7 +725,13 @@ namespace MOAR.Helpers
             {
                 scavDifficulty.Value = ServerStoredDefaults.scavDifficulty;
                 pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
+                debug.Value = ServerStoredDefaults.debug;
             }
+
+            zombieHealth.Value = ServerStoredDefaults.zombieHealth;
+            zombiesEnabled.Value = ServerStoredDefaults.zombiesEnabled;
+            zombieWaveDistribution.Value = ServerStoredDefaults.zombieWaveDistribution;
+            zombieWaveQuantity.Value = ServerStoredDefaults.zombieWaveQuantity;
 
             scavWaveDistribution.Value = ServerStoredDefaults.scavWaveDistribution;
             pmcWaveDistribution.Value = ServerStoredDefaults.pmcWaveDistribution;
@@ -668,6 +762,13 @@ namespace MOAR.Helpers
             currentPreset.Value = Routers.GetCurrentPresetName();
             scavDifficulty.Value = ServerStoredValues.scavDifficulty;
             pmcDifficulty.Value = ServerStoredValues.pmcDifficulty;
+            debug.Value = ServerStoredValues.debug;
+
+            zombieHealth.Value = ServerStoredValues.zombieHealth;
+            zombiesEnabled.Value = ServerStoredValues.zombiesEnabled;
+            zombieWaveDistribution.Value = ServerStoredValues.zombieWaveDistribution;
+            zombieWaveQuantity.Value = ServerStoredValues.zombieWaveQuantity;
+
             scavWaveDistribution.Value = ServerStoredValues.scavWaveDistribution;
             pmcWaveDistribution.Value = ServerStoredValues.pmcWaveDistribution;
             scavWaveQuantity.Value = ServerStoredValues.scavWaveQuantity;

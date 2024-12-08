@@ -21,6 +21,7 @@ namespace MOAR.Helpers
         public static async void RefreshLocationInfo()
         {
             await PatchConstants.BackEndSession.GetLevelSettings();
+            // await PatchConstants.BackEndSession.GetWeatherAndTime();
         }
     }
 }

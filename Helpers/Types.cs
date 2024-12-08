@@ -22,6 +22,10 @@ namespace MOAR
         public double scavDifficulty { get; set; }
         public double scavWaveDistribution { get; set; }
         public double scavWaveQuantity { get; set; }
+        public bool zombiesEnabled { get; set; }
+        public double zombieWaveDistribution { get; set; }
+        public double zombieWaveQuantity { get; set; }
+        public double zombieHealth { get; set; }
         public bool startingPmcs { get; set; }
         public double pmcWaveDistribution { get; set; }
         public double pmcWaveQuantity { get; set; }
@@ -44,5 +48,6 @@ namespace MOAR
         public bool bossInvasion { get; set; }
         public int bossInvasionSpawnChance { get; set; }
         public bool gradualBossInvasion { get; set; }
+        public bool debug { get; set; }
     }
 }
