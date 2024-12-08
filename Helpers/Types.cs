@@ -20,18 +20,18 @@ namespace MOAR
     {
         public double pmcDifficulty { get; set; }
         public double scavDifficulty { get; set; }
-        public double defaultScavStartWaveRatio { get; set; }
-        public double defaultScavWaveMultiplier { get; set; }
+        public double scavWaveDistribution { get; set; }
+        public double scavWaveQuantity { get; set; }
         public bool startingPmcs { get; set; }
-        public double defaultPmcStartWaveRatio { get; set; }
-        public double defaultPmcWaveMultiplier { get; set; }
-        public int defaultMaxBotCap { get; set; }
-        public int defaultMaxBotPerZone { get; set; }
+        public double pmcWaveDistribution { get; set; }
+        public double pmcWaveQuantity { get; set; }
+        public int maxBotCap { get; set; }
+        public int maxBotPerZone { get; set; }
         public bool moreScavGroups { get; set; }
         public bool morePmcGroups { get; set; }
-        public int defaultGroupMaxPMC { get; set; }
-        public int defaultGroupMaxScav { get; set; }
-        public bool sniperBuddies { get; set; }
+        public int pmcMaxGroupSize { get; set; }
+        public int scavMaxGroupSize { get; set; }
+        public bool snipersHaveFriends { get; set; }
         public bool noZoneDelay { get; set; }
         public bool reducedZoneDelay { get; set; }
         public bool bossOpenZones { get; set; }
