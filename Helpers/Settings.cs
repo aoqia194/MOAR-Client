@@ -28,7 +28,7 @@ namespace MOAR.Helpers
 
         public static ConfigEntry<double> scavWaveQuantity;
 
-        // public static ConfigEntry<bool> startingPmcs;
+        public static ConfigEntry<bool> startingPmcs;
         public static ConfigEntry<double> pmcWaveDistribution;
         public static ConfigEntry<double> pmcWaveQuantity;
 
@@ -66,19 +66,30 @@ namespace MOAR.Helpers
             UpdateServerStoredValues();
 
             // Main SETTINGS =====================================
+            startingPmcs = Config.Bind(
+                "1. Main Settings",
+                "Starting PMCS On/Off",
+                ServerStoredDefaults.startingPmcs,
+                new ConfigDescription(
+                    "Causes all PMCs to spawn in the first few minutes of the game (performance intensive)",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 95 }
+                )
+            );
 
             pmcDifficulty = Config.Bind(
                 "1. Main Settings",
                 "Pmc difficulty",
                 ServerStoredDefaults.pmcDifficulty,
                 new ConfigDescription(
-                    "Randomly rolls for easy/medium/hard/impossible",
+                    "Works with SAIN or SPT to decide the bot's 'difficulty' preset (EASY: 0, easy-MEDIUM: 0.4,  easy-MEDIUM-hard: 0.6, medium-hard: 0.85, HARD-impossible: 1, etc..)",
                     new AcceptableValueRange<double>(0, 1.5),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
-                        ShowRangeAsPercent = true,
+                        ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.pmcDifficulty,
+                        Order = 96,
                     }
                 )
             );
@@ -88,14 +99,14 @@ namespace MOAR.Helpers
                 "Scav difficulty",
                 ServerStoredDefaults.scavDifficulty,
                 new ConfigDescription(
-                    "Randomly rolls for easy/medium/hard/impossible",
+                    "Works with SAIN or SPT to decide the bot's 'difficulty' preset (EASY: 0, easy-MEDIUM: 0.4,  easy-MEDIUM-hard: 0.6, medium-hard: 0.85, HARD-impossible: 1, etc..)",
                     new AcceptableValueRange<double>(0, 1.5),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
-                        ShowRangeAsPercent = true,
+                        ShowRangeAsPercent = false,
                         DefaultValue = ServerStoredDefaults.scavDifficulty,
-                        Order = 96,
+                        Order = 97,
                     }
                 )
             );
@@ -105,7 +116,7 @@ namespace MOAR.Helpers
                 "Moar Preset",
                 "Random",
                 new ConfigDescription(
-                    "Preset to be used, default pulls a random weighted preset from the config.",
+                    "Preset to be used, random pulls a random weighted preset from the PresetWeights.json every time a raid ends",
                     new AcceptableValueList<string>(PresetList.Select(item => item.Name).ToArray()),
                     new ConfigurationManagerAttributes { ShowRangeAsPercent = false, Order = 98 }
                 )
@@ -116,7 +127,7 @@ namespace MOAR.Helpers
                 "Preset Announce On/Off",
                 true,
                 new ConfigDescription(
-                    "Enable/Disable preset announce on raid start",
+                    "Enable/Disable preset announce preset on raid start",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = false, Order = 99 }
                 )
@@ -644,6 +655,7 @@ namespace MOAR.Helpers
             {
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
+                ServerStoredValues.startingPmcs = startingPmcs.Value;
                 ServerStoredValues.debug = debug.Value;
 
                 ServerStoredValues.zombiesEnabled = zombiesEnabled.Value;
@@ -683,6 +695,7 @@ namespace MOAR.Helpers
                 ServerStoredValues.debug = debug.Value;
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
+                ServerStoredValues.startingPmcs = startingPmcs.Value;
             }
 
             Routers.SetOverrideConfig(ServerStoredValues);
@@ -725,6 +738,7 @@ namespace MOAR.Helpers
             {
                 scavDifficulty.Value = ServerStoredDefaults.scavDifficulty;
                 pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
+                startingPmcs.Value = ServerStoredDefaults.startingPmcs;
                 debug.Value = ServerStoredDefaults.debug;
             }
 
@@ -762,6 +776,7 @@ namespace MOAR.Helpers
             currentPreset.Value = Routers.GetCurrentPresetName();
             scavDifficulty.Value = ServerStoredValues.scavDifficulty;
             pmcDifficulty.Value = ServerStoredValues.pmcDifficulty;
+            startingPmcs.Value = ServerStoredValues.startingPmcs;
             debug.Value = ServerStoredValues.debug;
 
             zombieHealth.Value = ServerStoredValues.zombieHealth;
