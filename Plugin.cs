@@ -6,7 +6,7 @@ using MOAR.Patches;
 namespace MOAR
 {
     [
-        BepInPlugin("MOAR.settings", "MOAR", "2.5.1"),
+        BepInPlugin("MOAR.settings", "MOAR", "2.5.6"),
         BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)
     ]
     public class Plugin : BaseUnityPlugin

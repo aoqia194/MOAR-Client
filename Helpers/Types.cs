@@ -36,8 +36,6 @@ namespace MOAR
         public int pmcMaxGroupSize { get; set; }
         public int scavMaxGroupSize { get; set; }
         public bool snipersHaveFriends { get; set; }
-        public bool noZoneDelay { get; set; }
-        public bool reducedZoneDelay { get; set; }
         public bool bossOpenZones { get; set; }
         public bool randomRaiderGroup { get; set; }
         public int randomRaiderGroupChance { get; set; }
