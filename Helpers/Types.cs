@@ -27,6 +27,9 @@ namespace MOAR
         public double zombieWaveQuantity { get; set; }
         public double zombieHealth { get; set; }
         public bool startingPmcs { get; set; }
+        public bool allOpenZones { get; set; }
+        public bool pmcOpenZones { get; set; }
+        public bool playerOpenZones { get; set; }
         public double pmcWaveDistribution { get; set; }
         public double pmcWaveQuantity { get; set; }
         public int maxBotCap { get; set; }

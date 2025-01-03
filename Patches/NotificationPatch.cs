@@ -10,7 +10,10 @@ namespace MOAR.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(GameWorld), nameof(GameWorld.OnGameStarted));
+            return AccessTools.Method(
+                typeof(MetricsEventsClass),
+                nameof(MetricsEventsClass.SetLocationLoaded)
+            );
         }
 
         [PatchPrefix]

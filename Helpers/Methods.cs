@@ -1,7 +1,9 @@
+using System.Drawing;
 using System.Threading.Tasks;
 using Comfort.Common;
 using EFT;
 using EFT.Communications;
+using EFT.PrefabSettings;
 using SPT.Reflection.Utils;
 using UnityEngine;
 

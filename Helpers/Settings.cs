@@ -29,6 +29,9 @@ namespace MOAR.Helpers
         public static ConfigEntry<double> scavWaveQuantity;
 
         public static ConfigEntry<bool> startingPmcs;
+        public static ConfigEntry<bool> playerOpenZones;
+        public static ConfigEntry<bool> pmcOpenZones;
+        public static ConfigEntry<bool> allOpenZones;
         public static ConfigEntry<double> pmcWaveDistribution;
         public static ConfigEntry<double> pmcWaveQuantity;
 
@@ -66,6 +69,39 @@ namespace MOAR.Helpers
             UpdateServerStoredValues();
 
             // Main SETTINGS =====================================
+            allOpenZones = Config.Bind(
+                "1. Main Settings",
+                "PMC/Scav/Player OpenZones On/Off",
+                ServerStoredDefaults.allOpenZones,
+                new ConfigDescription(
+                    "All Bots/Players (excluding bosses) can spawn anywhere (overrides PMC/Player openzone options)",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 94 }
+                )
+            );
+
+            pmcOpenZones = Config.Bind(
+                "1. Main Settings",
+                "PMC OpenZones On/Off",
+                ServerStoredDefaults.pmcOpenZones,
+                new ConfigDescription(
+                    "Adds a large number of zones (including all scav zones) to pmc bots spawn pool",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 94 }
+                )
+            );
+
+            playerOpenZones = Config.Bind(
+                "1. Main Settings",
+                "Player OpenZones On/Off",
+                ServerStoredDefaults.playerOpenZones,
+                new ConfigDescription(
+                    "Adds a large number of zones to the Player's (you) spawn pool",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 94 }
+                )
+            );
+
             startingPmcs = Config.Bind(
                 "1. Main Settings",
                 "Starting PMCS On/Off",
@@ -656,6 +692,9 @@ namespace MOAR.Helpers
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
+                ServerStoredValues.playerOpenZones = playerOpenZones.Value;
+                ServerStoredValues.pmcOpenZones = pmcOpenZones.Value;
+                ServerStoredValues.allOpenZones = allOpenZones.Value;
                 ServerStoredValues.debug = debug.Value;
 
                 ServerStoredValues.zombiesEnabled = zombiesEnabled.Value;
@@ -696,6 +735,9 @@ namespace MOAR.Helpers
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
+                ServerStoredValues.playerOpenZones = playerOpenZones.Value;
+                ServerStoredValues.pmcOpenZones = pmcOpenZones.Value;
+                ServerStoredValues.allOpenZones = allOpenZones.Value;
             }
 
             Routers.SetOverrideConfig(ServerStoredValues);
@@ -739,6 +781,9 @@ namespace MOAR.Helpers
                 scavDifficulty.Value = ServerStoredDefaults.scavDifficulty;
                 pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
                 startingPmcs.Value = ServerStoredDefaults.startingPmcs;
+                playerOpenZones.Value = ServerStoredDefaults.playerOpenZones;
+                pmcOpenZones.Value = ServerStoredDefaults.pmcOpenZones;
+                allOpenZones.Value = ServerStoredDefaults.allOpenZones;
                 debug.Value = ServerStoredDefaults.debug;
             }
 
@@ -777,6 +822,9 @@ namespace MOAR.Helpers
             scavDifficulty.Value = ServerStoredValues.scavDifficulty;
             pmcDifficulty.Value = ServerStoredValues.pmcDifficulty;
             startingPmcs.Value = ServerStoredValues.startingPmcs;
+            allOpenZones.Value = ServerStoredValues.allOpenZones;
+            pmcOpenZones.Value = ServerStoredValues.pmcOpenZones;
+            playerOpenZones.Value = ServerStoredValues.playerOpenZones;
             debug.Value = ServerStoredValues.debug;
 
             zombieHealth.Value = ServerStoredValues.zombieHealth;
