@@ -6,7 +6,7 @@ using MOAR.Patches;
 namespace MOAR
 {
     [
-        BepInPlugin("MOAR.settings", "MOAR", "2.6.6"),
+        BepInPlugin("MOAR.settings", "MOAR", "2.6.7"),
         BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)
     ]
     public class Plugin : BaseUnityPlugin
@@ -21,6 +21,7 @@ namespace MOAR
             Routers.Init(Config);
 
             new NotificationPatch().Enable();
+            new NotificationPatch2().Enable();
         }
     };
 }

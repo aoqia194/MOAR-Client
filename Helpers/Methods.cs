@@ -6,18 +6,24 @@ using EFT.Communications;
 using EFT.PrefabSettings;
 using SPT.Reflection.Utils;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace MOAR.Helpers
 {
     public class Methods
     {
-        public static void DisplayMessage(string message)
+        public static void DisplayMessage(
+            string message,
+            ENotificationIconType notificationType = ENotificationIconType.Quest
+        )
         {
-            NotificationManagerClass.DisplayMessageNotification(
+            var currentMessage = new GClass2269(
                 message,
                 ENotificationDurationType.Long,
-                ENotificationIconType.EntryPoint
+                notificationType
             );
+
+            NotificationManagerClass.DisplayNotification(currentMessage);
         }
 
         public static async void RefreshLocationInfo()
