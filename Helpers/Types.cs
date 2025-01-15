@@ -27,6 +27,7 @@ namespace MOAR
         public double zombieWaveQuantity { get; set; }
         public double zombieHealth { get; set; }
         public bool startingPmcs { get; set; }
+        public bool spawnSmoothing { get; set; }
         public bool allOpenZones { get; set; }
         public bool pmcOpenZones { get; set; }
         public bool playerOpenZones { get; set; }
@@ -34,11 +35,12 @@ namespace MOAR
         public double pmcWaveQuantity { get; set; }
         public int maxBotCap { get; set; }
         public int maxBotPerZone { get; set; }
-        public bool moreScavGroups { get; set; }
-        public bool morePmcGroups { get; set; }
+        public double scavGroupChance { get; set; }
+        public double pmcGroupChance { get; set; }
+        public double sniperGroupChance { get; set; }
         public int pmcMaxGroupSize { get; set; }
         public int scavMaxGroupSize { get; set; }
-        public bool snipersHaveFriends { get; set; }
+        public double sniperMaxGroupSize { get; set; }
         public bool bossOpenZones { get; set; }
         public bool randomRaiderGroup { get; set; }
         public int randomRaiderGroupChance { get; set; }

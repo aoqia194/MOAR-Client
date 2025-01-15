@@ -29,6 +29,7 @@ namespace MOAR.Helpers
         public static ConfigEntry<double> scavWaveQuantity;
 
         public static ConfigEntry<bool> startingPmcs;
+        public static ConfigEntry<bool> spawnSmoothing;
         public static ConfigEntry<bool> playerOpenZones;
         public static ConfigEntry<bool> pmcOpenZones;
         public static ConfigEntry<bool> allOpenZones;
@@ -37,11 +38,12 @@ namespace MOAR.Helpers
 
         public static ConfigEntry<int> maxBotCap;
         public static ConfigEntry<int> maxBotPerZone;
-        public static ConfigEntry<bool> moreScavGroups;
-        public static ConfigEntry<bool> morePmcGroups;
+        public static ConfigEntry<double> scavGroupChance;
+        public static ConfigEntry<double> pmcGroupChance;
+        public static ConfigEntry<double> sniperGroupChance;
         public static ConfigEntry<int> pmcMaxGroupSize;
         public static ConfigEntry<int> scavMaxGroupSize;
-        public static ConfigEntry<bool> snipersHaveFriends;
+        public static ConfigEntry<double> sniperMaxGroupSize;
         public static ConfigEntry<bool> bossOpenZones;
         public static ConfigEntry<bool> randomRaiderGroup;
         public static ConfigEntry<int> randomRaiderGroupChance;
@@ -102,12 +104,23 @@ namespace MOAR.Helpers
                 )
             );
 
+            spawnSmoothing = Config.Bind(
+                "1. Main Settings",
+                "spawnSmoothing On/Off",
+                ServerStoredDefaults.spawnSmoothing,
+                new ConfigDescription(
+                    "Improves performance: Ensures spawn spacing between waves. (doesn't change quantity, or change overall timing, just prevents bursts of spawns close together)",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 95 }
+                )
+            );
+
             startingPmcs = Config.Bind(
                 "1. Main Settings",
                 "Starting PMCS On/Off",
                 ServerStoredDefaults.startingPmcs,
                 new ConfigDescription(
-                    "Causes all PMCs to spawn in the first few minutes of the game (performance intensive)",
+                    "Performance Hit: Causes all PMCs to spawn in the first few minutes of the game (performance intensive)",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = false, Order = 95 }
                 )
@@ -387,17 +400,18 @@ namespace MOAR.Helpers
                 )
             );
 
-            snipersHaveFriends = Config.Bind(
+            sniperMaxGroupSize = Config.Bind(
                 "2. Custom game Settings",
-                "snipersHaveFriends On/Off",
-                ServerStoredDefaults.snipersHaveFriends,
+                "sniperMaxGroupSize",
+                ServerStoredDefaults.sniperMaxGroupSize,
                 new ConfigDescription(
-                    "Gives snipers a chance of spawning with a friend :)",
-                    null,
+                    "Sniper Max group size",
+                    new AcceptableValueRange<double>(0, 5),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
-                        DefaultValue = ServerStoredDefaults.snipersHaveFriends,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.sniperMaxGroupSize,
                         Order = 87,
                     }
                 )
@@ -437,33 +451,52 @@ namespace MOAR.Helpers
                 )
             );
 
-            morePmcGroups = Config.Bind(
+            pmcGroupChance = Config.Bind(
                 "2. Custom game Settings",
-                "morePmcGroups On/Off",
-                ServerStoredDefaults.morePmcGroups,
+                "pmcGroupChance Percentage",
+                ServerStoredDefaults.pmcGroupChance,
                 new ConfigDescription(
-                    "Increases chances of pmc groups spawning, doesn't dramatically increase quantity.",
-                    null,
+                    "Controls the chance of group vs solo  spawning, max amount configured by maxGroup",
+                    new AcceptableValueRange<double>(0, 1),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
-                        DefaultValue = ServerStoredDefaults.morePmcGroups,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.pmcGroupChance,
                         Order = 90,
                     }
                 )
             );
 
-            moreScavGroups = Config.Bind(
+            scavGroupChance = Config.Bind(
                 "2. Custom game Settings",
-                "moreScavGroups On/Off",
-                ServerStoredDefaults.moreScavGroups,
+                "scavGroupChance Percentage",
+                ServerStoredDefaults.scavGroupChance,
                 new ConfigDescription(
-                    "Increases chances of scav groups spawning, doesn't dramatically increase quantity.",
-                    null,
+                    "Controls the chance of group vs solo spawning, max amount configured by maxGroup",
+                    new AcceptableValueRange<double>(0, 1),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
-                        DefaultValue = ServerStoredDefaults.moreScavGroups,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.scavGroupChance,
+                        Order = 91,
+                    }
+                )
+            );
+
+            sniperGroupChance = Config.Bind(
+                "2. Custom game Settings",
+                "sniperGroupChance Percentage",
+                ServerStoredDefaults.sniperGroupChance,
+                new ConfigDescription(
+                    "Controls the chance of group vs solo spawning, max amount configured by maxGroup",
+                    new AcceptableValueRange<double>(0, 1),
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        ShowRangeAsPercent = false,
+                        DefaultValue = ServerStoredDefaults.sniperGroupChance,
                         Order = 91,
                     }
                 )
@@ -542,8 +575,8 @@ namespace MOAR.Helpers
                 "ZombieWaveDistribution",
                 ServerStoredDefaults.zombieWaveDistribution,
                 new ConfigDescription(
-                    "Determines the weighting of spawns at the beginning (1) spread evenly throughout (0.5) or at the end(0) of the raid",
-                    new AcceptableValueRange<double>(0, 1),
+                    "Determines the weighting of spawns, (0.1) waves will spawn mostly at the beginning, (1) Default: waves are spread evenly, or (1.9) spawns will appear near the end of the raid of the raid",
+                    new AcceptableValueRange<double>(0.1, 1.9),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
@@ -575,8 +608,8 @@ namespace MOAR.Helpers
                 "ScavWaveDistribution",
                 ServerStoredDefaults.scavWaveDistribution,
                 new ConfigDescription(
-                    "Determines the weighting of spawns at the beginning (1) spread evenly throughout (0.5) or at the end(0) of the raid",
-                    new AcceptableValueRange<double>(0, 1),
+                    "Determines the weighting of spawns, (0.1) waves will spawn mostly at the beginning, (1) Default: waves are spread evenly, or (1.9) spawns will appear near the end of the raid of the raid",
+                    new AcceptableValueRange<double>(0.1, 1.9),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
@@ -592,8 +625,8 @@ namespace MOAR.Helpers
                 "PmcWaveDistribution",
                 ServerStoredDefaults.pmcWaveDistribution,
                 new ConfigDescription(
-                    "Determines the weighting of spawns at the beginning (1) spread evenly throughout (0.5) or at the end(0) of the raid",
-                    new AcceptableValueRange<double>(0, 1),
+                    "Determines the weighting of spawns, (0.1) waves will spawn mostly at the beginning, (1) Default: waves are spread evenly, or (1.9) spawns will appear near the end of the raid of the raid",
+                    new AcceptableValueRange<double>(0.1, 1.9),
                     new ConfigurationManagerAttributes
                     {
                         IsAdvanced = false,
@@ -685,6 +718,8 @@ namespace MOAR.Helpers
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
+                ServerStoredValues.spawnSmoothing = spawnSmoothing.Value;
+
                 ServerStoredValues.playerOpenZones = playerOpenZones.Value;
                 ServerStoredValues.pmcOpenZones = pmcOpenZones.Value;
                 ServerStoredValues.allOpenZones = allOpenZones.Value;
@@ -705,11 +740,12 @@ namespace MOAR.Helpers
 
                 ServerStoredValues.maxBotCap = maxBotCap.Value;
                 ServerStoredValues.maxBotPerZone = maxBotPerZone.Value;
-                ServerStoredValues.moreScavGroups = moreScavGroups.Value;
-                ServerStoredValues.morePmcGroups = morePmcGroups.Value;
+                ServerStoredValues.scavGroupChance = scavGroupChance.Value;
+                ServerStoredValues.pmcGroupChance = pmcGroupChance.Value;
+                ServerStoredValues.sniperGroupChance = sniperGroupChance.Value;
                 ServerStoredValues.pmcMaxGroupSize = pmcMaxGroupSize.Value;
                 ServerStoredValues.scavMaxGroupSize = scavMaxGroupSize.Value;
-                ServerStoredValues.snipersHaveFriends = snipersHaveFriends.Value;
+                ServerStoredValues.sniperMaxGroupSize = sniperMaxGroupSize.Value;
                 ServerStoredValues.bossOpenZones = bossOpenZones.Value;
                 ServerStoredValues.randomRaiderGroup = randomRaiderGroup.Value;
                 ServerStoredValues.randomRaiderGroupChance = randomRaiderGroupChance.Value;
@@ -728,6 +764,7 @@ namespace MOAR.Helpers
                 ServerStoredValues.scavDifficulty = Math.Round(scavDifficulty.Value, 2);
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
+                ServerStoredValues.spawnSmoothing = spawnSmoothing.Value;
                 ServerStoredValues.playerOpenZones = playerOpenZones.Value;
                 ServerStoredValues.pmcOpenZones = pmcOpenZones.Value;
                 ServerStoredValues.allOpenZones = allOpenZones.Value;
@@ -750,11 +787,12 @@ namespace MOAR.Helpers
                 && pmcWaveQuantity.Value == ServerStoredValues.pmcWaveQuantity
                 && maxBotCap.Value == ServerStoredValues.maxBotCap
                 && maxBotPerZone.Value == ServerStoredValues.maxBotPerZone
-                && moreScavGroups.Value == ServerStoredValues.moreScavGroups
-                && morePmcGroups.Value == ServerStoredValues.morePmcGroups
+                && scavGroupChance.Value == ServerStoredValues.scavGroupChance
+                && pmcGroupChance.Value == ServerStoredValues.pmcGroupChance
+                && sniperGroupChance.Value == ServerStoredValues.sniperGroupChance
                 && pmcMaxGroupSize.Value == ServerStoredValues.pmcMaxGroupSize
                 && scavMaxGroupSize.Value == ServerStoredValues.scavMaxGroupSize
-                && snipersHaveFriends.Value == ServerStoredValues.snipersHaveFriends
+                && sniperMaxGroupSize.Value == ServerStoredValues.sniperMaxGroupSize
                 && bossOpenZones.Value == ServerStoredValues.bossOpenZones
                 && randomRaiderGroup.Value == ServerStoredValues.randomRaiderGroup
                 && randomRaiderGroupChance.Value == ServerStoredValues.randomRaiderGroupChance
@@ -774,6 +812,7 @@ namespace MOAR.Helpers
                 scavDifficulty.Value = ServerStoredDefaults.scavDifficulty;
                 pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
                 startingPmcs.Value = ServerStoredDefaults.startingPmcs;
+                spawnSmoothing.Value = ServerStoredDefaults.spawnSmoothing;
                 playerOpenZones.Value = ServerStoredDefaults.playerOpenZones;
                 pmcOpenZones.Value = ServerStoredDefaults.pmcOpenZones;
                 allOpenZones.Value = ServerStoredDefaults.allOpenZones;
@@ -791,11 +830,12 @@ namespace MOAR.Helpers
             pmcWaveQuantity.Value = ServerStoredDefaults.pmcWaveQuantity;
             maxBotCap.Value = ServerStoredDefaults.maxBotCap;
             maxBotPerZone.Value = ServerStoredDefaults.maxBotPerZone;
-            moreScavGroups.Value = ServerStoredDefaults.moreScavGroups;
-            morePmcGroups.Value = ServerStoredDefaults.morePmcGroups;
+            scavGroupChance.Value = ServerStoredDefaults.scavGroupChance;
+            pmcGroupChance.Value = ServerStoredDefaults.pmcGroupChance;
+            sniperGroupChance.Value = ServerStoredDefaults.sniperGroupChance;
             pmcMaxGroupSize.Value = ServerStoredDefaults.pmcMaxGroupSize;
             scavMaxGroupSize.Value = ServerStoredDefaults.scavMaxGroupSize;
-            snipersHaveFriends.Value = ServerStoredDefaults.snipersHaveFriends;
+            sniperMaxGroupSize.Value = ServerStoredDefaults.sniperMaxGroupSize;
             bossOpenZones.Value = ServerStoredDefaults.bossOpenZones;
             randomRaiderGroup.Value = ServerStoredDefaults.randomRaiderGroup;
             randomRaiderGroupChance.Value = ServerStoredDefaults.randomRaiderGroupChance;
@@ -815,6 +855,8 @@ namespace MOAR.Helpers
             scavDifficulty.Value = ServerStoredValues.scavDifficulty;
             pmcDifficulty.Value = ServerStoredValues.pmcDifficulty;
             startingPmcs.Value = ServerStoredValues.startingPmcs;
+            spawnSmoothing.Value = ServerStoredValues.spawnSmoothing;
+
             allOpenZones.Value = ServerStoredValues.allOpenZones;
             pmcOpenZones.Value = ServerStoredValues.pmcOpenZones;
             playerOpenZones.Value = ServerStoredValues.playerOpenZones;
@@ -831,11 +873,12 @@ namespace MOAR.Helpers
             pmcWaveQuantity.Value = ServerStoredValues.pmcWaveQuantity;
             maxBotCap.Value = ServerStoredValues.maxBotCap;
             maxBotPerZone.Value = ServerStoredValues.maxBotPerZone;
-            moreScavGroups.Value = ServerStoredValues.moreScavGroups;
-            morePmcGroups.Value = ServerStoredValues.morePmcGroups;
+            scavGroupChance.Value = ServerStoredValues.scavGroupChance;
+            pmcGroupChance.Value = ServerStoredValues.pmcGroupChance;
+            sniperGroupChance.Value = ServerStoredValues.sniperGroupChance;
             pmcMaxGroupSize.Value = ServerStoredValues.pmcMaxGroupSize;
             scavMaxGroupSize.Value = ServerStoredValues.scavMaxGroupSize;
-            snipersHaveFriends.Value = ServerStoredValues.snipersHaveFriends;
+            sniperMaxGroupSize.Value = ServerStoredValues.sniperMaxGroupSize;
             bossOpenZones.Value = ServerStoredValues.bossOpenZones;
             randomRaiderGroup.Value = ServerStoredValues.randomRaiderGroup;
             randomRaiderGroupChance.Value = ServerStoredValues.randomRaiderGroupChance;
