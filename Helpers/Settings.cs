@@ -52,6 +52,8 @@ namespace MOAR.Helpers
         public static ConfigEntry<KeyboardShortcut> DeleteBotSpawn;
         public static ConfigEntry<KeyboardShortcut> AddBotSpawn;
         public static ConfigEntry<KeyboardShortcut> AddPlayerSpawn;
+
+        public static ConfigEntry<KeyboardShortcut> AnnounceKey;
         public static ConfigEntry<int> mainBossChanceBuff;
         public static ConfigEntry<bool> bossInvasion;
         public static ConfigEntry<int> bossInvasionSpawnChance;
@@ -73,6 +75,7 @@ namespace MOAR.Helpers
             UpdateServerStoredValues();
 
             // Main SETTINGS =====================================
+
             disableCascadingSpawns = Config.Bind(
                 "1. Main Settings",
                 "disableCascadingSpawns On/Off",
@@ -159,6 +162,17 @@ namespace MOAR.Helpers
                     "Enable/Disable preset announce preset on raid start",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = false, Order = 99 }
+                )
+            );
+
+            AnnounceKey = Config.Bind(
+                "1. Main Settings",
+                "Announce Key",
+                new KeyboardShortcut(KeyCode.End),
+                new ConfigDescription(
+                    "Announces preset",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true, Order = 100 }
                 )
             );
 

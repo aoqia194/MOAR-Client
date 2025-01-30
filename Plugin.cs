@@ -25,9 +25,8 @@ namespace MOAR
             // new SpawnPatch().Enable();
             // new SpawnPatch2().Enable();
             // new SpawnPatch3().Enable();
-            new OnGameStartedPatch().Enable();
+            // new OnGameStartedPatch().Enable();
             new NotificationPatch().Enable();
-            new NotificationPatch2().Enable();
         }
 
         private void Update()
@@ -89,6 +88,14 @@ namespace MOAR
                         EFT.Communications.ENotificationIconType.Alert
                     );
                 }
+            }
+
+            if (Settings.AnnounceKey.Value.BetterIsDown())
+            {
+                Methods.DisplayMessage(
+                    "Current preset is " + Routers.GetAnnouncePresetName(),
+                    EFT.Communications.ENotificationIconType.EntryPoint
+                );
             }
         }
     };

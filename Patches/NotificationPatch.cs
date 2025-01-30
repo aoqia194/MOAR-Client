@@ -77,32 +77,32 @@ namespace MOAR.Patches
         }
     }
 
+    // public class NotificationPatch : ModulePatch
+    // {
+    //     protected override MethodBase GetTargetMethod()
+    //     {
+    //         return AccessTools.Method(
+    //             typeof(MetricsEventsClass),
+    //             nameof(MetricsEventsClass.SetLocationLoaded)
+    //         );
+    //     }
+
+    //     [PatchPrefix]
+    //     static bool Prefix()
+    //     {
+    //         if (!Settings.ShowPresetOnRaidStart.Value)
+    //             return false;
+
+    //         Methods.DisplayMessage(
+    //             "Preset set to " + Routers.GetAnnouncePresetName(),
+    //             EFT.Communications.ENotificationIconType.EntryPoint
+    //         );
+
+    //         return true;
+    //     }
+    // }
+
     public class NotificationPatch : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return AccessTools.Method(
-                typeof(MetricsEventsClass),
-                nameof(MetricsEventsClass.SetLocationLoaded)
-            );
-        }
-
-        [PatchPrefix]
-        static bool Prefix()
-        {
-            if (!Settings.ShowPresetOnRaidStart.Value)
-                return false;
-
-            Methods.DisplayMessage(
-                "Preset set to " + Routers.GetAnnouncePresetName(),
-                EFT.Communications.ENotificationIconType.EntryPoint
-            );
-
-            return true;
-        }
-    }
-
-    public class NotificationPatch2 : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
