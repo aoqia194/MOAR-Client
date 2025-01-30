@@ -1,12 +1,7 @@
-using System.Drawing;
-using System.Threading.Tasks;
 using Comfort.Common;
 using EFT;
 using EFT.Communications;
-using EFT.PrefabSettings;
 using SPT.Reflection.Utils;
-using UnityEngine;
-using UnityEngine.Playables;
 
 namespace MOAR.Helpers
 {
@@ -30,6 +25,23 @@ namespace MOAR.Helpers
         {
             await PatchConstants.BackEndSession.GetLevelSettings();
             // await PatchConstants.BackEndSession.GetWeatherAndTime();
+        }
+
+        public static AddSpawnRequest GetPlayersCoordinatesAndLevel()
+        {
+            var position = Singleton<GameWorld>.Instance.MainPlayer.Position;
+            var location = Singleton<GameWorld>.Instance.MainPlayer.Location;
+
+            return new AddSpawnRequest
+            {
+                map = location,
+                position = new Ixyz
+                {
+                    x = position.x,
+                    y = position.y,
+                    z = position.z,
+                },
+            };
         }
     }
 }

@@ -2,13 +2,81 @@
 using System.Collections.Generic;
 using System.Reflection;
 using EFT;
+using EFT.Game.Spawning;
 using HarmonyLib;
 using MOAR.Helpers;
 using SPT.Reflection.Patching;
-using UnityEngine.Playables;
 
 namespace MOAR.Patches
 {
+    public class BotZoneDumper : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(LocationScene), nameof(LocationScene.Awake));
+        }
+
+        [PatchPostfix]
+        public static void Postfix(LocationScene __instance)
+        {
+            foreach (var zone in __instance.BotZones)
+            {
+                Logger.LogInfo($"BotZone name: {zone.NameZone} ID: {zone.Id}");
+            }
+        }
+    }
+
+    public class SpawnPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(
+                typeof(SpawnSystemClass),
+                "GInterface418.ValidateSpawnPosition"
+            );
+        }
+
+        [PatchPrefix]
+        static bool Prefix(ref bool __result)
+        {
+            __result = true;
+
+            return false;
+        }
+    }
+
+    public class SpawnPatch2 : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(BotZone), nameof(BotZone.smethod_0));
+        }
+
+        [PatchPrefix]
+        static bool Prefix(ref bool __result)
+        {
+            __result = true;
+
+            return false;
+        }
+    }
+
+    public class SpawnPatch3 : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(BotZone), nameof(BotZone.IsValid));
+        }
+
+        [PatchPrefix]
+        static bool Prefix(ref bool __result)
+        {
+            __result = true;
+
+            return false;
+        }
+    }
+
     public class NotificationPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()

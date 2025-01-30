@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -17,6 +16,8 @@ namespace MOAR.Helpers
         public static ConfigSettings ServerStoredValues;
         public static ConfigSettings ServerStoredDefaults;
         public static ConfigEntry<bool> debug;
+
+        public static ConfigEntry<bool> enablePointOverlay;
         public static ConfigEntry<double> pmcDifficulty;
         public static ConfigEntry<double> scavDifficulty;
 
@@ -30,9 +31,7 @@ namespace MOAR.Helpers
 
         public static ConfigEntry<bool> startingPmcs;
         public static ConfigEntry<bool> spawnSmoothing;
-        public static ConfigEntry<bool> playerOpenZones;
-        public static ConfigEntry<bool> pmcOpenZones;
-        public static ConfigEntry<bool> allOpenZones;
+        public static ConfigEntry<bool> disableCascadingSpawns;
         public static ConfigEntry<double> pmcWaveDistribution;
         public static ConfigEntry<double> pmcWaveQuantity;
 
@@ -50,6 +49,9 @@ namespace MOAR.Helpers
         public static ConfigEntry<bool> randomRogueGroup;
         public static ConfigEntry<int> randomRogueGroupChance;
         public static ConfigEntry<bool> disableBosses;
+        public static ConfigEntry<KeyboardShortcut> DeleteBotSpawn;
+        public static ConfigEntry<KeyboardShortcut> AddBotSpawn;
+        public static ConfigEntry<KeyboardShortcut> AddPlayerSpawn;
         public static ConfigEntry<int> mainBossChanceBuff;
         public static ConfigEntry<bool> bossInvasion;
         public static ConfigEntry<int> bossInvasionSpawnChance;
@@ -71,34 +73,12 @@ namespace MOAR.Helpers
             UpdateServerStoredValues();
 
             // Main SETTINGS =====================================
-            allOpenZones = Config.Bind(
+            disableCascadingSpawns = Config.Bind(
                 "1. Main Settings",
-                "PMC/Scav/Player OpenZones On/Off",
-                ServerStoredDefaults.allOpenZones,
+                "disableCascadingSpawns On/Off",
+                ServerStoredDefaults.disableCascadingSpawns,
                 new ConfigDescription(
-                    "All Bots/Players (excluding bosses) can spawn anywhere (overrides PMC/Player openzone options)",
-                    null,
-                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 94 }
-                )
-            );
-
-            pmcOpenZones = Config.Bind(
-                "1. Main Settings",
-                "PMC OpenZones On/Off",
-                ServerStoredDefaults.pmcOpenZones,
-                new ConfigDescription(
-                    "Adds a large number of zones (including all scav zones) to pmc bots spawn pool",
-                    null,
-                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 94 }
-                )
-            );
-
-            playerOpenZones = Config.Bind(
-                "1. Main Settings",
-                "Player OpenZones On/Off",
-                ServerStoredDefaults.playerOpenZones,
-                new ConfigDescription(
-                    "Adds a large number of zones to the Player's (you) spawn pool",
+                    "This turns off the new cascading spawn system, and makes scavs/pmcs spawn at random across the map.",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = false, Order = 94 }
                 )
@@ -687,6 +667,50 @@ namespace MOAR.Helpers
                 )
             );
 
+            AddBotSpawn = Config.Bind(
+                "4. Advanced",
+                "Add a bot spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to add a PMC/SCAV shared use spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            DeleteBotSpawn = Config.Bind(
+                "4. Advanced",
+                "Delete a bot spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to remove nearest PMC/SCAV shared use spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            AddPlayerSpawn = Config.Bind(
+                "4. Advanced",
+                "Add a player spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to add a player starting spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            enablePointOverlay = Config.Bind(
+                "4. Advanced",
+                "Spawnpoint overlay On/Off",
+                false,
+                new ConfigDescription(
+                    "Dev value - Turn on and off pointOverlay",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
             currentPreset.SettingChanged += OnPresetChange;
 
             if (IsFika)
@@ -720,9 +744,7 @@ namespace MOAR.Helpers
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
                 ServerStoredValues.spawnSmoothing = spawnSmoothing.Value;
 
-                ServerStoredValues.playerOpenZones = playerOpenZones.Value;
-                ServerStoredValues.pmcOpenZones = pmcOpenZones.Value;
-                ServerStoredValues.allOpenZones = allOpenZones.Value;
+                ServerStoredValues.disableCascadingSpawns = disableCascadingSpawns.Value;
                 ServerStoredValues.debug = debug.Value;
 
                 ServerStoredValues.zombiesEnabled = zombiesEnabled.Value;
@@ -765,9 +787,7 @@ namespace MOAR.Helpers
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
                 ServerStoredValues.spawnSmoothing = spawnSmoothing.Value;
-                ServerStoredValues.playerOpenZones = playerOpenZones.Value;
-                ServerStoredValues.pmcOpenZones = pmcOpenZones.Value;
-                ServerStoredValues.allOpenZones = allOpenZones.Value;
+                ServerStoredValues.disableCascadingSpawns = disableCascadingSpawns.Value;
             }
 
             Routers.SetOverrideConfig(ServerStoredValues);
@@ -813,9 +833,7 @@ namespace MOAR.Helpers
                 pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
                 startingPmcs.Value = ServerStoredDefaults.startingPmcs;
                 spawnSmoothing.Value = ServerStoredDefaults.spawnSmoothing;
-                playerOpenZones.Value = ServerStoredDefaults.playerOpenZones;
-                pmcOpenZones.Value = ServerStoredDefaults.pmcOpenZones;
-                allOpenZones.Value = ServerStoredDefaults.allOpenZones;
+                disableCascadingSpawns.Value = ServerStoredDefaults.disableCascadingSpawns;
                 debug.Value = ServerStoredDefaults.debug;
             }
 
@@ -857,9 +875,7 @@ namespace MOAR.Helpers
             startingPmcs.Value = ServerStoredValues.startingPmcs;
             spawnSmoothing.Value = ServerStoredValues.spawnSmoothing;
 
-            allOpenZones.Value = ServerStoredValues.allOpenZones;
-            pmcOpenZones.Value = ServerStoredValues.pmcOpenZones;
-            playerOpenZones.Value = ServerStoredValues.playerOpenZones;
+            disableCascadingSpawns.Value = ServerStoredValues.disableCascadingSpawns;
             debug.Value = ServerStoredValues.debug;
 
             zombieHealth.Value = ServerStoredValues.zombieHealth;

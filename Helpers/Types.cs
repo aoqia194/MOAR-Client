@@ -1,5 +1,18 @@
 namespace MOAR
 {
+    public class Ixyz
+    {
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
+    }
+
+    public class AddSpawnRequest
+    {
+        public string map { get; set; }
+        public Ixyz position { get; set; }
+    }
+
     public class GetPresetsListResponse
     {
         public Preset[] data;
@@ -28,9 +41,7 @@ namespace MOAR
         public double zombieHealth { get; set; }
         public bool startingPmcs { get; set; }
         public bool spawnSmoothing { get; set; }
-        public bool allOpenZones { get; set; }
-        public bool pmcOpenZones { get; set; }
-        public bool playerOpenZones { get; set; }
+        public bool disableCascadingSpawns { get; set; }
         public double pmcWaveDistribution { get; set; }
         public double pmcWaveQuantity { get; set; }
         public int maxBotCap { get; set; }

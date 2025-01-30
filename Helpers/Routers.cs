@@ -1,8 +1,6 @@
 using System;
 using BepInEx.Configuration;
-using EFT.Communications;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace MOAR.Helpers
 {
@@ -12,6 +10,42 @@ namespace MOAR.Helpers
         {
             var req = SPT.Common.Http.RequestHandler.GetJson("/moar/currentPreset");
             return req;
+        }
+
+        public static string AddBotSpawn()
+        {
+            var request = Methods.GetPlayersCoordinatesAndLevel();
+
+            var req = SPT.Common.Http.RequestHandler.PostJson(
+                "/moar/addBotSpawn",
+                JsonConvert.SerializeObject(request)
+            );
+
+            return req.ToString(); // no need to parse bare strings
+        }
+
+        public static string DeleteBotSpawn()
+        {
+            var request = Methods.GetPlayersCoordinatesAndLevel();
+
+            var req = SPT.Common.Http.RequestHandler.PostJson(
+                "/moar/deleteBotSpawn",
+                JsonConvert.SerializeObject(request)
+            );
+
+            return req.ToString(); // no need to parse bare strings
+        }
+
+        public static string AddPlayerSpawn()
+        {
+            var request = Methods.GetPlayersCoordinatesAndLevel();
+
+            var req = SPT.Common.Http.RequestHandler.PostJson(
+                "/moar/addPlayerSpawn",
+                JsonConvert.SerializeObject(request)
+            );
+
+            return req.ToString(); // no need to parse bare strings
         }
 
         public static string GetAnnouncePresetLabel()
