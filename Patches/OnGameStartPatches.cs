@@ -19,3 +19,17 @@ public class OnGameStartedPatch : ModulePatch
         __instance.GetOrAddComponent<BotZoneRenderer>();
     }
 }
+
+public class OnGameStartedPatch2 : ModulePatch
+{
+    protected override MethodBase GetTargetMethod()
+    {
+        return AccessTools.Method(typeof(BotZone), nameof(BotZone.Awake));
+    }
+
+    [PatchPrefix]
+    private static void PatchPrefix(GameWorld __instance)
+    {
+        __instance.GetOrAddComponent<BotZoneRenderer>();
+    }
+}

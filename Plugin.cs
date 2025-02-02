@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
+using HarmonyLib;
 using MOAR.Helpers;
 using MOAR.Patches;
 
@@ -15,6 +16,12 @@ namespace MOAR
     {
         public static ManualLogSource LogSource;
 
+        private void Awake()
+        {
+            var harmony = new Harmony("com.example.botzonepatch");
+            harmony.PatchAll();
+        }
+
         private void Start()
         {
             LogSource = Logger;
@@ -22,6 +29,7 @@ namespace MOAR
             Settings.Init(Config);
             Routers.Init(Config);
 
+            new SniperPatch().Enable();
             // new SpawnPatch().Enable();
             // new SpawnPatch2().Enable();
             // new SpawnPatch3().Enable();
@@ -42,14 +50,8 @@ namespace MOAR
                         EFT.Communications.ENotificationIconType.Default
                     );
                 }
-                else
-                {
-                    Methods.DisplayMessage(
-                        "DeleteBotSpawn failed: Not in Raid",
-                        EFT.Communications.ENotificationIconType.Alert
-                    );
-                }
             }
+
             if (Settings.AddBotSpawn.Value.BetterIsDown())
             {
                 if (Singleton<GameWorld>.Instance.MainPlayer != null)
@@ -61,11 +63,17 @@ namespace MOAR
                         EFT.Communications.ENotificationIconType.Default
                     );
                 }
-                else
+            }
+
+            if (Settings.AddSniperSpawn.Value.BetterIsDown())
+            {
+                if (Singleton<GameWorld>.Instance.MainPlayer != null)
                 {
+                    Routers.AddSniperSpawn();
                     Methods.DisplayMessage(
-                        "AddBotSpawn failed: Not in Raid",
-                        EFT.Communications.ENotificationIconType.Alert
+                        "Added 1 sniper spawn point to "
+                            + Singleton<GameWorld>.Instance.MainPlayer.Location,
+                        EFT.Communications.ENotificationIconType.Default
                     );
                 }
             }
@@ -79,13 +87,6 @@ namespace MOAR
                         "Added 1 player spawn point to "
                             + Singleton<GameWorld>.Instance.MainPlayer.Location,
                         EFT.Communications.ENotificationIconType.Default
-                    );
-                }
-                else
-                {
-                    Methods.DisplayMessage(
-                        "AddPlayerSpawn failed: Not in Raid",
-                        EFT.Communications.ENotificationIconType.Alert
                     );
                 }
             }

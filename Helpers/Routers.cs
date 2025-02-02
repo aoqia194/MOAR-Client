@@ -24,6 +24,18 @@ namespace MOAR.Helpers
             return req.ToString(); // no need to parse bare strings
         }
 
+        public static string AddSniperSpawn()
+        {
+            var request = Methods.GetPlayersCoordinatesAndLevel();
+
+            var req = SPT.Common.Http.RequestHandler.PostJson(
+                "/moar/addSniperSpawn",
+                JsonConvert.SerializeObject(request)
+            );
+
+            return req.ToString(); // no need to parse bare strings
+        }
+
         public static string DeleteBotSpawn()
         {
             var request = Methods.GetPlayersCoordinatesAndLevel();

@@ -51,6 +51,7 @@ namespace MOAR.Helpers
         public static ConfigEntry<bool> disableBosses;
         public static ConfigEntry<KeyboardShortcut> DeleteBotSpawn;
         public static ConfigEntry<KeyboardShortcut> AddBotSpawn;
+        public static ConfigEntry<KeyboardShortcut> AddSniperSpawn;
         public static ConfigEntry<KeyboardShortcut> AddPlayerSpawn;
 
         public static ConfigEntry<KeyboardShortcut> AnnounceKey;
@@ -172,7 +173,7 @@ namespace MOAR.Helpers
                 new ConfigDescription(
                     "Announces preset",
                     null,
-                    new ConfigurationManagerAttributes { IsAdvanced = true, Order = 100 }
+                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 100 }
                 )
             );
 
@@ -687,6 +688,17 @@ namespace MOAR.Helpers
                 new KeyboardShortcut(),
                 new ConfigDescription(
                     "Hotkey to add a PMC/SCAV shared use spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            AddSniperSpawn = Config.Bind(
+                "4. Advanced",
+                "Add a sniper spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to add a sniper shared use spawn",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = true }
                 )
