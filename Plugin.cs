@@ -33,7 +33,10 @@ namespace MOAR
             // new SpawnPatch().Enable();
             // new SpawnPatch2().Enable();
             // new SpawnPatch3().Enable();
-            // new OnGameStartedPatch().Enable();
+            if (Settings.enablePointOverlay.Value)
+            {
+                new OnGameStartedPatch().Enable();
+            }
             new NotificationPatch().Enable();
         }
 

@@ -31,7 +31,7 @@ namespace MOAR.Helpers
 
         public static ConfigEntry<bool> startingPmcs;
         public static ConfigEntry<bool> spawnSmoothing;
-        public static ConfigEntry<bool> disableCascadingSpawns;
+        public static ConfigEntry<bool> randomSpawns;
         public static ConfigEntry<double> pmcWaveDistribution;
         public static ConfigEntry<double> pmcWaveQuantity;
 
@@ -77,14 +77,19 @@ namespace MOAR.Helpers
 
             // Main SETTINGS =====================================
 
-            disableCascadingSpawns = Config.Bind(
+            randomSpawns = Config.Bind(
                 "1. Main Settings",
-                "disableCascadingSpawns On/Off",
-                ServerStoredDefaults.disableCascadingSpawns,
+                "randomSpawns On/Off",
+                ServerStoredDefaults.randomSpawns,
                 new ConfigDescription(
                     "This turns off the new cascading spawn system, and makes scavs/pmcs spawn at random across the map.",
                     null,
-                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 94 }
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        Order = 94,
+                        ReadOnly = !!startingPmcs?.Value,
+                    }
                 )
             );
 
@@ -95,7 +100,12 @@ namespace MOAR.Helpers
                 new ConfigDescription(
                     "Improves performance: Ensures spawn spacing between waves. (doesn't change quantity, or change overall timing, just prevents bursts of spawns close together)",
                     null,
-                    new ConfigurationManagerAttributes { IsAdvanced = false, Order = 95 }
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        Order = 95,
+                        ReadOnly = !!startingPmcs?.Value,
+                    }
                 )
             );
 
@@ -698,7 +708,7 @@ namespace MOAR.Helpers
                 "Add a sniper spawn",
                 new KeyboardShortcut(),
                 new ConfigDescription(
-                    "Hotkey to add a sniper shared use spawn",
+                    "Hotkey to add a sniper spawn",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = true }
                 )
@@ -731,13 +741,17 @@ namespace MOAR.Helpers
                 "Spawnpoint overlay On/Off",
                 false,
                 new ConfigDescription(
-                    "Dev value - Turn on and off pointOverlay",
+                    "Dev value - Turn on and off pointOverlay dev tool (Requires restart)",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = true }
                 )
             );
 
             currentPreset.SettingChanged += OnPresetChange;
+
+            spawnSmoothing.SettingChanged += OnStartingPmcsChanged;
+            randomSpawns.SettingChanged += OnStartingPmcsChanged;
+            startingPmcs.SettingChanged += OnStartingPmcsChanged;
 
             if (IsFika)
             {
@@ -770,7 +784,7 @@ namespace MOAR.Helpers
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
                 ServerStoredValues.spawnSmoothing = spawnSmoothing.Value;
 
-                ServerStoredValues.disableCascadingSpawns = disableCascadingSpawns.Value;
+                ServerStoredValues.randomSpawns = randomSpawns.Value;
                 ServerStoredValues.debug = debug.Value;
 
                 ServerStoredValues.zombiesEnabled = zombiesEnabled.Value;
@@ -813,7 +827,7 @@ namespace MOAR.Helpers
                 ServerStoredValues.pmcDifficulty = Math.Round(pmcDifficulty.Value, 2);
                 ServerStoredValues.startingPmcs = startingPmcs.Value;
                 ServerStoredValues.spawnSmoothing = spawnSmoothing.Value;
-                ServerStoredValues.disableCascadingSpawns = disableCascadingSpawns.Value;
+                ServerStoredValues.randomSpawns = randomSpawns.Value;
             }
 
             Routers.SetOverrideConfig(ServerStoredValues);
@@ -859,7 +873,7 @@ namespace MOAR.Helpers
                 pmcDifficulty.Value = ServerStoredDefaults.pmcDifficulty;
                 startingPmcs.Value = ServerStoredDefaults.startingPmcs;
                 spawnSmoothing.Value = ServerStoredDefaults.spawnSmoothing;
-                disableCascadingSpawns.Value = ServerStoredDefaults.disableCascadingSpawns;
+                randomSpawns.Value = ServerStoredDefaults.randomSpawns;
                 debug.Value = ServerStoredDefaults.debug;
             }
 
@@ -901,7 +915,7 @@ namespace MOAR.Helpers
             startingPmcs.Value = ServerStoredValues.startingPmcs;
             spawnSmoothing.Value = ServerStoredValues.spawnSmoothing;
 
-            disableCascadingSpawns.Value = ServerStoredValues.disableCascadingSpawns;
+            randomSpawns.Value = ServerStoredValues.randomSpawns;
             debug.Value = ServerStoredValues.debug;
 
             zombieHealth.Value = ServerStoredValues.zombieHealth;
@@ -931,6 +945,15 @@ namespace MOAR.Helpers
             bossInvasion.Value = ServerStoredValues.bossInvasion;
             bossInvasionSpawnChance.Value = ServerStoredValues.bossInvasionSpawnChance;
             gradualBossInvasion.Value = ServerStoredValues.gradualBossInvasion;
+        }
+
+        private static void OnStartingPmcsChanged(object sender, EventArgs e)
+        {
+            if (startingPmcs?.Value == true)
+            {
+                randomSpawns.Value = true;
+                spawnSmoothing.Value = false;
+            }
         }
 
         private static void OnPresetChange(object sender, EventArgs e)

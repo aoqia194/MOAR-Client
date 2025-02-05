@@ -27,10 +27,6 @@ public class BotZoneRenderer : MonoBehaviour
 
     public void RefreshZones()
     {
-        // if (!Settings.enablePointOverlay.Value)
-        // {
-        //     return;
-        // }
         // This method is just lol, but works for this use case.
         _botZones = LocationScene.GetAllObjectsAndWhenISayAllIActuallyMeanIt<BotZone>().ToList();
 
@@ -42,11 +38,6 @@ public class BotZoneRenderer : MonoBehaviour
 
     private void Awake()
     {
-        if (!Settings.enablePointOverlay.Value)
-        {
-            return;
-        }
-
         // If DLSS or FSR are enabled, set a screen scale value
         if (CameraClass.Instance.SSAA.isActiveAndEnabled)
         {
@@ -61,11 +52,6 @@ public class BotZoneRenderer : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!Settings.enablePointOverlay.Value)
-        {
-            return;
-        }
-
         if (guiStyle is null)
         {
             CreateGuiStyle();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
+using Comfort.Common;
 using Comfort.Logs;
 using EFT;
 using EFT.Game.Spawning;
@@ -137,7 +138,7 @@ namespace MOAR.Patches
         {
             foreach (var spawnPoint in spawnPoints)
             {
-                if (spawnPoint.Id == id)
+                if (spawnPoint.Id != null && spawnPoint.BotZoneName != null && spawnPoint.Id == id)
                 {
                     return spawnPoint.BotZoneName;
                 }
@@ -199,20 +200,28 @@ namespace MOAR.Patches
                     }
                 }
             }
-
+            // Plugin.LogSource.LogInfo("1");
             if (botZones.Count == 0 || snipeZones.Count == 0)
                 return;
-
+            // Plugin.LogSource.LogInfo("2");
             for (int index = 0; index < __result.Length; index++)
             {
                 SpawnPointMarker zone = __result[index];
-                if (zone == null)
+                if (
+                    zone == null
+                    || zone.SpawnPoint.Categories == ESpawnCategoryMask.None
+                    || zone.SpawnPoint.Categories.ContainPlayerCategory()
+                )
                     continue;
-
+                // Plugin.LogSource.LogInfo("3");
                 var botzoneDoesNotExist = zone.BotZone.IsNullOrDestroyed();
+                // Plugin.LogSource.LogInfo("4");
                 if (botzoneDoesNotExist)
                 {
                     string botZoneName = GetBotZoneNameById(parameters, zone.Id);
+                    // Plugin.LogSource.LogInfo(
+                    //     "No Botzone" + zone.name + "-" + zone.Sides + "-" + botZoneName
+                    // );
 
                     if (
                         IsNameInBotzones(snipeZones, botZoneName)
@@ -249,8 +258,13 @@ namespace MOAR.Patches
                         ];
 
                         // Plugin.LogSource.LogInfo(
-                        //     RandomBotZone.SpawnPointMarkers.Count + " - " + RandomBotZone.MaxPersons
+                        //     RandomBotZone.NameZone
+                        //         + "-"
+                        //         + RandomBotZone.SpawnPointMarkers.Count
+                        //         + " - "
+                        //         + RandomBotZone.MaxPersons
                         // );
+
                         zone.BotZone = RandomBotZone;
                     }
                     else
@@ -261,15 +275,18 @@ namespace MOAR.Patches
                             .. RandomBotZone.SpawnPointMarkers,
                             zone,
                         ];
+
                         // PatrolWay RandomPatrolZone = GetRandomPatrol(RandomBotZone.PatrolWays);
                         // RandomBotZone.PatrolWays = [.. RandomBotZone.PatrolWays, RandomPatrolZone.];
 
-                        int newVal =
-                            RandomBotZone.MaxPersons > 0 ? RandomBotZone.MaxPersons + 1 : 10;
-
-                        AccessTools
-                            .Field(typeof(BotZone), "_maxPersons")
-                            .SetValue(RandomBotZone, newVal);
+                        // int newVal =
+                        //     RandomBotZone.MaxPersons > 0 ? RandomBotZone.MaxPersons + 1 : 10;
+                        if (RandomBotZone.MaxPersons != -1)
+                        {
+                            AccessTools
+                                .Field(typeof(BotZone), "_maxPersons")
+                                .SetValue(RandomBotZone, -1);
+                        }
 
                         // Plugin.LogSource.LogInfo(
                         //     RandomBotZone.SpawnPointMarkers.Count + " - " + RandomBotZone.MaxPersons

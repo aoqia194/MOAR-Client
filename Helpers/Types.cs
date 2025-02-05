@@ -41,7 +41,7 @@ namespace MOAR
         public double zombieHealth { get; set; }
         public bool startingPmcs { get; set; }
         public bool spawnSmoothing { get; set; }
-        public bool disableCascadingSpawns { get; set; }
+        public bool randomSpawns { get; set; }
         public double pmcWaveDistribution { get; set; }
         public double pmcWaveQuantity { get; set; }
         public int maxBotCap { get; set; }
