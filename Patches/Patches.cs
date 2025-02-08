@@ -11,6 +11,7 @@ using HarmonyLib;
 using MOAR.Helpers;
 using Newtonsoft.Json;
 using Sirenix.Serialization;
+using SPT.Custom.CustomAI;
 using SPT.Reflection.Patching;
 using UnityEngine;
 
@@ -84,18 +85,273 @@ namespace MOAR.Patches
         }
     }
 
+    public class AddEnemyPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(BotsGroup).GetMethod(
+                nameof(BotsGroup.AddEnemy),
+                BindingFlags.Public | BindingFlags.Instance
+            );
+        }
+
+        [PatchPrefix]
+        protected static bool PatchPrefix(
+            BotsGroup __instance,
+            IPlayer person,
+            EBotEnemyCause cause
+        )
+        {
+            if (__instance == null || person == null || !person.IsAI)
+                return true;
+            // // We only care about bot groups adding you as an enemy
+            if (
+                __instance.Side != person.Side
+                || person.Side == EPlayerSide.Savage
+                || __instance.Side == EPlayerSide.Savage
+            )
+            {
+                return true;
+            }
+
+            // if (cause == EBotEnemyCause.initial)
+            //     return true;
+            // Get the ID's of all group members
+
+            // List<BotOwner> groupMemberList = AiHelpers.GetAllMembers(__instance);
+
+            // Check if the the bot group was created by this mod
+            List<BotOwner> groupMemberList = SPT.Custom.CustomAI.AiHelpers.GetAllMembers(
+                __instance
+            );
+
+            // IEnumerable<BotOwner> activatedBots = Singleton<IBotGame>
+            //     .Instance
+            //     .BotsController
+            //     .Bots
+            //     .BotOwners;
+
+            // Plugin.LogSource.LogWarning("----++++----");
+            // Vector3 temp = new();
+            // List<BotOwner> filteredBots = groupMemberList.ApplyFilter(m =>
+            // {
+            //     if (temp.IsZero())
+            //     {
+            //         temp = m.Memory.ActivatedPos;
+            //         return true;
+            //     }
+            //     return temp == m.Memory.ActivatedPos;
+            // });
+
+            // // int[] groupAreaId = groupMemberList.Select(m => m.AIData.PlaceInfo.AreaId).ToArray();
+            // //
+            // // string[] groupMemberEntryPoints = groupMemberList
+            // //     .Select(m => m.Profile.AccountId)
+            // //     .ToArray();
+
+            // Plugin.LogSource.LogWarning("-------------");
+
+            // //     return true;
+            // string[] groupMemberGroupIds = groupMemberList
+            //     .Select(m => m.Profile.Info.GroupId)
+            //     .ToArray();
+
+            // string[] groupMemberTeamIds = groupMemberList
+            //     .Select(m => m.Profile.Info.TeamId)
+            //     .ToArray();
+
+            // string[] groupMemberAccountIds = groupMemberList.Select(m => m.AccountId).ToArray();
+
+            // string[] groupMemberProfileIDs = groupMemberList.Select(m => m.Profile.Id).ToArray();
+
+            // person.Profile.Stats.Eft.Victims.Any(v => groupMemberIDs.Contains(v.ProfileId)
+            // {
+            //     Plugin.LogSource.LogWarning(
+            //         "Preventing BotsGroup::AddEnemy from running due to EBotEnemyCause.addBotAtGroup because the victim was in a bot group created by this mod"
+            //     );
+            //     return false;
+            // }
+            // __instance.CoverPointMaster.BotZone.Id;
+
+            Plugin.LogSource.LogWarning(
+                person.TeamId
+                    + " > "
+                    + person.GroupId
+                    + " > "
+                    + person.AccountId
+                    + " > "
+                    + person.ProfileId
+                    + " > "
+                    + cause
+                    + " > "
+                    + groupMemberList.ContainsPlayer(person)
+                    + " > "
+            // + person.AIData.Player.TeamId
+            // + " > "
+            // + string.Join(", ", groupTeamId)
+            // + string.Join(", ", groupMemberTime)
+            // + " groupMemberEntryPoints "
+            // + groupMemberEntryPoints.Contains(person.Profile.Info.EntryPoint)
+            // + " GroupId "
+            // + groupMemberGroupIds.Contains(person.Profile.Info.GroupId)
+            // + " TeamIds "
+            // + groupMemberTeamIds.Contains(person.Profile.Info.TeamId)
+            // + " AccountId "
+            // + groupMemberAccountIds.Contains(person.Profile.AccountId)
+            // + " ProfileID "
+            // + groupMemberProfileIDs.Contains(person.Profile.Id)
+            );
+
+            if (cause == EBotEnemyCause.initial || groupMemberList.ContainsPlayer(person))
+            {
+                // if (__instance.IsEnemy(person))
+                // {
+                //     __instance.RemoveEnemy(person);
+                // }
+
+                // if (!__instance.IsAlly(person))
+                // {
+                //     __instance.Allies.Add(person);
+                // }
+
+                Plugin.LogSource.LogWarning("Make bot peaceful against" + person.Profile.Id);
+
+                return false;
+            }
+
+            // Plugin.LogSource.LogInfo(
+            //     "You are now an enemy of "
+            //         + string.Join(", ", groupMemberIDs)
+            //         + " due to reason: "
+            //         + cause.ToString()
+            // );
+
+            return true;
+        }
+    }
+
+    public class BotSpawnerPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(BotSpawner), nameof(BotSpawner.GetGroupAndSetEnemies));
+        }
+
+        [PatchPostfix]
+        static void Postfix(ref BotsGroup __result, BotOwner bot, BotZone zone)
+        {
+            if (bot.Side == EPlayerSide.Bear || bot.Side == EPlayerSide.Usec)
+            {
+                FieldInfo botSpawnerAllPlayersFieldInfo = AccessTools.Field(
+                    typeof(BotSpawner),
+                    "_allPlayers"
+                );
+
+                FieldInfo botSpawnerDeadBodiesControllerFieldInfo = AccessTools.Field(
+                    typeof(BotSpawner),
+                    "_deadBodiesController"
+                );
+
+                BotSpawner botSpawner =
+                    Singleton<GameWorld>.Instance.gameObject.GetComponent<BotSpawner>();
+
+                DeadBodiesController deadBodiesController = (DeadBodiesController)
+                    botSpawnerDeadBodiesControllerFieldInfo.GetValue(botSpawner);
+
+                List<Player> _allPlayers =
+                    (List<Player>)botSpawnerAllPlayersFieldInfo.GetValue(botSpawner);
+                EPlayerSide side = bot.Profile.Info.Side;
+                List<BotOwner> list = [.. botSpawner.method_4(bot)];
+
+                BotsGroup group =
+                    new(
+                        zone,
+                        botSpawner.BotGame,
+                        bot,
+                        list,
+                        deadBodiesController,
+                        _allPlayers,
+                        true
+                    );
+                group.TargetMembersCount = 5;
+                botSpawner.Groups.Add(zone, side, group, true);
+                group.Lock();
+
+                botSpawner.method_5(bot);
+
+                __result = group;
+            }
+        }
+    }
+
     public class SniperPatch : ModulePatch
     {
-        static BotZone GetRandomBotZone(List<BotZone> zones, string name)
+        private static double Sq(double n)
         {
-            // Create a random number generator
+            return n * n;
+        }
+
+        private static double Pt(double a, double b)
+        {
+            return Math.Sqrt(Sq(a) + Sq(b));
+        }
+
+        public static double GetDistance(
+            double x,
+            double y,
+            double z,
+            double mX,
+            double mY,
+            double mZ
+        )
+        {
+            x = Math.Abs(x - mX);
+            y = Math.Abs(y - mY);
+            z = Math.Abs(z - mZ);
+
+            return Pt(Pt(x, z), y);
+        }
+
+        public static double GetVectorDistance(Vector3 v1, Vector3 v2)
+        {
+            return GetDistance(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+        }
+
+        public static BotZone FindFarthestZone(List<BotZone> botZones, Vector3 referencePoint)
+        {
+            if (botZones == null || botZones.Count == 0)
+            {
+                throw new ArgumentException("The botZones list cannot be null or empty.");
+            }
+
+            // Order the zones by distance in descending order
+            var orderedZones = botZones
+                .OrderBy(botZone => GetVectorDistance(botZone.CenterOfSpawnPoints, referencePoint))
+                .ToList();
+
+            // Get the last half of the list
+            int halfCount = orderedZones.Count / 2;
+            var lastHalfZones = orderedZones.Skip(halfCount).ToList();
+
+            // Select a random zone from the last half
+            System.Random random = new();
+            int randomIndex = random.Next(lastHalfZones.Count);
+
+            return lastHalfZones[randomIndex];
+        }
+
+        static BotZone GetNearestZone(List<BotZone> zones, string name, bool isPmc)
+        {
             System.Random random = new();
 
-            foreach (BotZone zone in zones)
+            if (!isPmc)
             {
-                if (zone.NameZone == name)
+                foreach (BotZone zone in zones)
                 {
-                    return zone;
+                    if (zone.NameZone == name)
+                    {
+                        return zone;
+                    }
                 }
             }
             // Generate a random index between 0 and the count of the list (exclusive)
@@ -168,7 +424,7 @@ namespace MOAR.Patches
         [PatchPostfix]
         static void Postfix(ref SpawnPointMarker[] __result, SpawnPointParams[] parameters)
         {
-            Plugin.LogSource.LogInfo("Start");
+            Plugin.LogSource.LogInfo("Attempting spawnzone updates");
             if (
                 __result == null
                 || parameters == null
@@ -203,6 +459,8 @@ namespace MOAR.Patches
             // Plugin.LogSource.LogInfo("1");
             if (botZones.Count == 0 || snipeZones.Count == 0)
                 return;
+
+            List<BotZone> nonSniperZones = botZones.ApplyFilter(zone => !zone.SnipeZone);
             // Plugin.LogSource.LogInfo("2");
             for (int index = 0; index < __result.Length; index++)
             {
@@ -216,13 +474,11 @@ namespace MOAR.Patches
                 // Plugin.LogSource.LogInfo("3");
                 var botzoneDoesNotExist = zone.BotZone.IsNullOrDestroyed();
                 // Plugin.LogSource.LogInfo("4");
+                string botZoneName = GetBotZoneNameById(parameters, zone.Id);
+                // bool isPmc = botZoneName.Contains("pmc");
+
                 if (botzoneDoesNotExist)
                 {
-                    string botZoneName = GetBotZoneNameById(parameters, zone.Id);
-                    // Plugin.LogSource.LogInfo(
-                    //     "No Botzone" + zone.name + "-" + zone.Sides + "-" + botZoneName
-                    // );
-
                     if (
                         IsNameInBotzones(snipeZones, botZoneName)
                         || botZoneName.ToLower().Contains("custom_snipe")
@@ -234,7 +490,7 @@ namespace MOAR.Patches
                             botZoneName = "";
                         }
 
-                        BotZone RandomBotZone = GetRandomBotZone(snipeZones, botZoneName);
+                        BotZone RandomBotZone = GetNearestZone(snipeZones, botZoneName, false);
 
                         int newVal =
                             RandomBotZone.MaxPersons > 0 ? RandomBotZone.MaxPersons + 1 : 5;
@@ -243,44 +499,38 @@ namespace MOAR.Patches
                             .Field(typeof(BotZone), "_maxPersons")
                             .SetValue(RandomBotZone, newVal);
 
-                        for (int i = 0; i < RandomBotZone.PatrolWays.Length; i++)
-                        {
-                            if (RandomBotZone.PatrolWays[i].PatrolType == PatrolType.patrolling)
-                            {
-                                RandomBotZone.PatrolWays[i].PatrolType = PatrolType.reserved;
-                            }
-                        }
+                        // for (int i = 0; i < RandomBotZone.PatrolWays.Length; i++)
+                        // {
+                        //     if (RandomBotZone.PatrolWays[i].PatrolType == PatrolType.patrolling)
+                        //     {
+                        //         RandomBotZone.PatrolWays[i].PatrolType = PatrolType.patrolling;
+                        //     }
+                        // }
 
-                        RandomBotZone.SpawnPointMarkers =
-                        [
-                            .. RandomBotZone.SpawnPointMarkers,
-                            zone,
-                        ];
-
-                        // Plugin.LogSource.LogInfo(
-                        //     RandomBotZone.NameZone
-                        //         + "-"
-                        //         + RandomBotZone.SpawnPointMarkers.Count
-                        //         + " - "
-                        //         + RandomBotZone.MaxPersons
-                        // );
+                        // RandomBotZone.SpawnPointMarkers =
+                        // [
+                        //     .. RandomBotZone.SpawnPointMarkers,
+                        //     zone,
+                        // ];
 
                         zone.BotZone = RandomBotZone;
                     }
                     else
                     {
-                        BotZone RandomBotZone = GetRandomBotZone(botZones, botZoneName);
-                        RandomBotZone.SpawnPointMarkers =
-                        [
-                            .. RandomBotZone.SpawnPointMarkers,
-                            zone,
-                        ];
+                        BotZone RandomBotZone = GetNearestZone(nonSniperZones, botZoneName, false);
 
-                        // PatrolWay RandomPatrolZone = GetRandomPatrol(RandomBotZone.PatrolWays);
-                        // RandomBotZone.PatrolWays = [.. RandomBotZone.PatrolWays, RandomPatrolZone.];
+                        // if (RandomBotZone.name != botZoneName)
+                        //     SetBotZoneName(parameters, zone.Id, RandomBotZone.name);
 
-                        // int newVal =
-                        //     RandomBotZone.MaxPersons > 0 ? RandomBotZone.MaxPersons + 1 : 10;
+                        // if (!RandomBotZone.SpawnPointMarkers.Contains(zone))
+                        // {
+                        //     RandomBotZone.SpawnPointMarkers =
+                        //     [
+                        //         .. RandomBotZone.SpawnPointMarkers,
+                        //         zone,
+                        //     ];
+                        // }
+
                         if (RandomBotZone.MaxPersons != -1)
                         {
                             AccessTools
@@ -288,30 +538,15 @@ namespace MOAR.Patches
                                 .SetValue(RandomBotZone, -1);
                         }
 
-                        // Plugin.LogSource.LogInfo(
-                        //     RandomBotZone.SpawnPointMarkers.Count + " - " + RandomBotZone.MaxPersons
-                        // );
-
                         zone.BotZone = RandomBotZone;
                     }
+                    // else
+                    // {
+                    //     if (zone.BotZone.name != botZoneName)
+                    //         SetBotZoneName(parameters, zone.Id, zone.BotZone.name);
                 }
             }
-
-            // foreach (SpawnPointMarker zone in __result)
-            // {
-            //     var botzoneExists = !zone.BotZone.IsNullOrDestroyed();
-            //     string botZoneName = GetBotZoneNameById(parameters, zone.Id);
-            //     if (botzoneExists)
-            //     {
-            //         Plugin.LogSource.LogInfo(
-            //             botZoneName + " has an assigned Botzone " + zone.BotZone.NameZone
-            //         );
-            //     }
-            //     else
-            //     {
-            //         Plugin.LogSource.LogInfo(botZoneName + " is STILL missing a botzone ");
-            //     }
-            // }
+            Plugin.LogSource.LogInfo("Spawnszone updates complete");
         }
     }
 

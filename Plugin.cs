@@ -30,6 +30,8 @@ namespace MOAR
             Routers.Init(Config);
 
             new SniperPatch().Enable();
+            // new BotSpawnerPatch().Enable();
+            new AddEnemyPatch().Enable();
             // new SpawnPatch().Enable();
             // new SpawnPatch2().Enable();
             // new SpawnPatch3().Enable();
