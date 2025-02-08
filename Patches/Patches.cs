@@ -104,7 +104,7 @@ namespace MOAR.Patches
         {
             if (__instance == null || person == null || !person.IsAI)
                 return true;
-            // // We only care about bot groups adding you as an enemy
+
             if (
                 __instance.Side != person.Side
                 || person.Side == EPlayerSide.Savage
@@ -114,118 +114,13 @@ namespace MOAR.Patches
                 return true;
             }
 
-            // if (cause == EBotEnemyCause.initial)
-            //     return true;
-            // Get the ID's of all group members
+            List<BotOwner> groupMemberList = AiHelpers.GetAllMembers(__instance);
 
-            // List<BotOwner> groupMemberList = AiHelpers.GetAllMembers(__instance);
-
-            // Check if the the bot group was created by this mod
-            List<BotOwner> groupMemberList = SPT.Custom.CustomAI.AiHelpers.GetAllMembers(
-                __instance
-            );
-
-            // IEnumerable<BotOwner> activatedBots = Singleton<IBotGame>
-            //     .Instance
-            //     .BotsController
-            //     .Bots
-            //     .BotOwners;
-
-            // Plugin.LogSource.LogWarning("----++++----");
-            // Vector3 temp = new();
-            // List<BotOwner> filteredBots = groupMemberList.ApplyFilter(m =>
-            // {
-            //     if (temp.IsZero())
-            //     {
-            //         temp = m.Memory.ActivatedPos;
-            //         return true;
-            //     }
-            //     return temp == m.Memory.ActivatedPos;
-            // });
-
-            // // int[] groupAreaId = groupMemberList.Select(m => m.AIData.PlaceInfo.AreaId).ToArray();
-            // //
-            // // string[] groupMemberEntryPoints = groupMemberList
-            // //     .Select(m => m.Profile.AccountId)
-            // //     .ToArray();
-
-            // Plugin.LogSource.LogWarning("-------------");
-
-            // //     return true;
-            // string[] groupMemberGroupIds = groupMemberList
-            //     .Select(m => m.Profile.Info.GroupId)
-            //     .ToArray();
-
-            // string[] groupMemberTeamIds = groupMemberList
-            //     .Select(m => m.Profile.Info.TeamId)
-            //     .ToArray();
-
-            // string[] groupMemberAccountIds = groupMemberList.Select(m => m.AccountId).ToArray();
-
-            // string[] groupMemberProfileIDs = groupMemberList.Select(m => m.Profile.Id).ToArray();
-
-            // person.Profile.Stats.Eft.Victims.Any(v => groupMemberIDs.Contains(v.ProfileId)
-            // {
-            //     Plugin.LogSource.LogWarning(
-            //         "Preventing BotsGroup::AddEnemy from running due to EBotEnemyCause.addBotAtGroup because the victim was in a bot group created by this mod"
-            //     );
-            //     return false;
-            // }
-            // __instance.CoverPointMaster.BotZone.Id;
-
-            Plugin.LogSource.LogWarning(
-                person.TeamId
-                    + " > "
-                    + person.GroupId
-                    + " > "
-                    + person.AccountId
-                    + " > "
-                    + person.ProfileId
-                    + " > "
-                    + cause
-                    + " > "
-                    + groupMemberList.ContainsPlayer(person)
-                    + " > "
-            // + person.AIData.Player.TeamId
-            // + " > "
-            // + string.Join(", ", groupTeamId)
-            // + string.Join(", ", groupMemberTime)
-            // + " groupMemberEntryPoints "
-            // + groupMemberEntryPoints.Contains(person.Profile.Info.EntryPoint)
-            // + " GroupId "
-            // + groupMemberGroupIds.Contains(person.Profile.Info.GroupId)
-            // + " TeamIds "
-            // + groupMemberTeamIds.Contains(person.Profile.Info.TeamId)
-            // + " AccountId "
-            // + groupMemberAccountIds.Contains(person.Profile.AccountId)
-            // + " ProfileID "
-            // + groupMemberProfileIDs.Contains(person.Profile.Id)
-            );
-
-            if (cause == EBotEnemyCause.initial || groupMemberList.ContainsPlayer(person))
-            {
-                // if (__instance.IsEnemy(person))
-                // {
-                //     __instance.RemoveEnemy(person);
-                // }
-
-                // if (!__instance.IsAlly(person))
-                // {
-                //     __instance.Allies.Add(person);
-                // }
-
-                Plugin.LogSource.LogWarning("Make bot peaceful against" + person.Profile.Id);
-
+            // Plugin.LogSource.LogWarning("--------" + Settings.factionAggression.Value);
+            if (Settings.factionAggression.Value || groupMemberList.Count == 1)
                 return false;
-            }
 
-            // Plugin.LogSource.LogInfo(
-            //     "You are now an enemy of "
-            //         + string.Join(", ", groupMemberIDs)
-            //         + " due to reason: "
-            //         + cause.ToString()
-            // );
-
+            // Plugin.LogSource.LogWarning("--------");
             return true;
         }
     }

@@ -16,7 +16,7 @@ namespace MOAR.Helpers
         public static ConfigSettings ServerStoredValues;
         public static ConfigSettings ServerStoredDefaults;
         public static ConfigEntry<bool> debug;
-
+        public static ConfigEntry<bool> factionAggression;
         public static ConfigEntry<bool> enablePointOverlay;
         public static ConfigEntry<double> pmcDifficulty;
         public static ConfigEntry<double> scavDifficulty;
@@ -76,6 +76,23 @@ namespace MOAR.Helpers
             UpdateServerStoredValues();
 
             // Main SETTINGS =====================================
+
+
+            factionAggression = Config.Bind(
+                "1. Main Settings",
+                "Faction Based Aggression On/Off",
+                false,
+                new ConfigDescription(
+                    "Makes it so PMCs aren't aggressive to their own faction, you know, like actual military contractors.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        IsAdvanced = false,
+                        Order = 93,
+                        ReadOnly = !!startingPmcs?.Value,
+                    }
+                )
+            );
 
             randomSpawns = Config.Bind(
                 "1. Main Settings",
