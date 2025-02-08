@@ -7,6 +7,7 @@ using Comfort.Common;
 using Comfort.Logs;
 using EFT;
 using EFT.Game.Spawning;
+using EFT.Utilities;
 using HarmonyLib;
 using MOAR.Helpers;
 using Newtonsoft.Json;
@@ -31,57 +32,6 @@ namespace MOAR.Patches
             {
                 Logger.LogInfo($"BotZone name: {zone.NameZone} ID: {zone.Id}");
             }
-        }
-    }
-
-    public class SpawnPatch : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return AccessTools.Method(
-                typeof(SpawnSystemClass),
-                "GInterface418.ValidateSpawnPosition"
-            );
-        }
-
-        [PatchPrefix]
-        static bool Prefix(ref bool __result)
-        {
-            __result = true;
-
-            return false;
-        }
-    }
-
-    public class SpawnPatch2 : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return AccessTools.Method(typeof(BotZone), nameof(BotZone.smethod_0));
-        }
-
-        [PatchPrefix]
-        static bool Prefix(ref bool __result)
-        {
-            __result = true;
-
-            return false;
-        }
-    }
-
-    public class SpawnPatch3 : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return AccessTools.Method(typeof(BotZone), nameof(BotZone.IsValid));
-        }
-
-        [PatchPrefix]
-        static bool Prefix(ref bool __result)
-        {
-            __result = true;
-
-            return false;
         }
     }
 
@@ -122,60 +72,6 @@ namespace MOAR.Patches
 
             // Plugin.LogSource.LogWarning("--------");
             return true;
-        }
-    }
-
-    public class BotSpawnerPatch : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return AccessTools.Method(typeof(BotSpawner), nameof(BotSpawner.GetGroupAndSetEnemies));
-        }
-
-        [PatchPostfix]
-        static void Postfix(ref BotsGroup __result, BotOwner bot, BotZone zone)
-        {
-            if (bot.Side == EPlayerSide.Bear || bot.Side == EPlayerSide.Usec)
-            {
-                FieldInfo botSpawnerAllPlayersFieldInfo = AccessTools.Field(
-                    typeof(BotSpawner),
-                    "_allPlayers"
-                );
-
-                FieldInfo botSpawnerDeadBodiesControllerFieldInfo = AccessTools.Field(
-                    typeof(BotSpawner),
-                    "_deadBodiesController"
-                );
-
-                BotSpawner botSpawner =
-                    Singleton<GameWorld>.Instance.gameObject.GetComponent<BotSpawner>();
-
-                DeadBodiesController deadBodiesController = (DeadBodiesController)
-                    botSpawnerDeadBodiesControllerFieldInfo.GetValue(botSpawner);
-
-                List<Player> _allPlayers =
-                    (List<Player>)botSpawnerAllPlayersFieldInfo.GetValue(botSpawner);
-                EPlayerSide side = bot.Profile.Info.Side;
-                List<BotOwner> list = [.. botSpawner.method_4(bot)];
-
-                BotsGroup group =
-                    new(
-                        zone,
-                        botSpawner.BotGame,
-                        bot,
-                        list,
-                        deadBodiesController,
-                        _allPlayers,
-                        true
-                    );
-                group.TargetMembersCount = 5;
-                botSpawner.Groups.Add(zone, side, group, true);
-                group.Lock();
-
-                botSpawner.method_5(bot);
-
-                __result = group;
-            }
         }
     }
 
@@ -235,20 +131,16 @@ namespace MOAR.Patches
             return lastHalfZones[randomIndex];
         }
 
-        static BotZone GetNearestZone(List<BotZone> zones, string name, bool isPmc)
+        static BotZone GetNearestZone(List<BotZone> zones, string name)
         {
-            System.Random random = new();
-
-            if (!isPmc)
+            foreach (BotZone zone in zones)
             {
-                foreach (BotZone zone in zones)
+                if (zone.NameZone == name)
                 {
-                    if (zone.NameZone == name)
-                    {
-                        return zone;
-                    }
+                    return zone;
                 }
             }
+            System.Random random = new();
             // Generate a random index between 0 and the count of the list (exclusive)
             int randomIndex = random.Next(zones.Count);
 
@@ -356,7 +248,7 @@ namespace MOAR.Patches
                 return;
 
             List<BotZone> nonSniperZones = botZones.ApplyFilter(zone => !zone.SnipeZone);
-            // Plugin.LogSource.LogInfo("2");
+
             for (int index = 0; index < __result.Length; index++)
             {
                 SpawnPointMarker zone = __result[index];
@@ -385,7 +277,7 @@ namespace MOAR.Patches
                             botZoneName = "";
                         }
 
-                        BotZone RandomBotZone = GetNearestZone(snipeZones, botZoneName, false);
+                        BotZone RandomBotZone = GetNearestZone(snipeZones, botZoneName);
 
                         int newVal =
                             RandomBotZone.MaxPersons > 0 ? RandomBotZone.MaxPersons + 1 : 5;
@@ -394,25 +286,11 @@ namespace MOAR.Patches
                             .Field(typeof(BotZone), "_maxPersons")
                             .SetValue(RandomBotZone, newVal);
 
-                        // for (int i = 0; i < RandomBotZone.PatrolWays.Length; i++)
-                        // {
-                        //     if (RandomBotZone.PatrolWays[i].PatrolType == PatrolType.patrolling)
-                        //     {
-                        //         RandomBotZone.PatrolWays[i].PatrolType = PatrolType.patrolling;
-                        //     }
-                        // }
-
-                        // RandomBotZone.SpawnPointMarkers =
-                        // [
-                        //     .. RandomBotZone.SpawnPointMarkers,
-                        //     zone,
-                        // ];
-
                         zone.BotZone = RandomBotZone;
                     }
                     else
                     {
-                        BotZone RandomBotZone = GetNearestZone(nonSniperZones, botZoneName, false);
+                        BotZone RandomBotZone = GetNearestZone(nonSniperZones, botZoneName);
 
                         // if (RandomBotZone.name != botZoneName)
                         //     SetBotZoneName(parameters, zone.Id, RandomBotZone.name);

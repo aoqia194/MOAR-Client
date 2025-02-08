@@ -9,7 +9,7 @@ using MOAR.Patches;
 namespace MOAR
 {
     [
-        BepInPlugin("MOAR.settings", "MOAR", "3.0.0"),
+        BepInPlugin("MOAR.settings", "MOAR", "3.0.1"),
         BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)
     ]
     public class Plugin : BaseUnityPlugin
@@ -30,11 +30,7 @@ namespace MOAR
             Routers.Init(Config);
 
             new SniperPatch().Enable();
-            // new BotSpawnerPatch().Enable();
             new AddEnemyPatch().Enable();
-            // new SpawnPatch().Enable();
-            // new SpawnPatch2().Enable();
-            // new SpawnPatch3().Enable();
             if (Settings.enablePointOverlay.Value)
             {
                 new OnGameStartedPatch().Enable();
