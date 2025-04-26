@@ -2,23 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Json;
-using Comfort.Common;
-using Comfort.Logs;
 using EFT;
 using EFT.Game.Spawning;
-using EFT.Utilities;
+using EFT.UI.Matchmaker;
 using HarmonyLib;
 using MOAR.Helpers;
-using Newtonsoft.Json;
-using Sirenix.Serialization;
 using SPT.Custom.CustomAI;
 using SPT.Reflection.Patching;
 using UnityEngine;
 
 namespace MOAR.Patches
 {
-    public class BotZoneDumper : ModulePatch
+    // MatchMakerAcceptScreen
+    public class RefreshLocation : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(
+                typeof(MatchMakerAcceptScreen),
+                nameof(MatchMakerAcceptScreen.Add)
+            );
+        }
+
+        [PatchPrefix]
+        public static bool Prefix()
+        {
+            Methods.RefreshLocationInfo();
+            return true;
+        }
+    }
+
+    public class MarkerDumper : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
@@ -28,9 +42,12 @@ namespace MOAR.Patches
         [PatchPostfix]
         public static void Postfix(LocationScene __instance)
         {
-            foreach (var zone in __instance.BotZones)
+            foreach (var marker in __instance.SpawnPointMarkers)
             {
-                Logger.LogInfo($"BotZone name: {zone.NameZone} ID: {zone.Id}");
+                if (marker.SpawnPoint.Categories.ContainPlayerCategory())
+                    Logger.LogInfo(
+                        $"marker name: {marker.SpawnPoint.Position} ID: {marker.SpawnPoint.Id}"
+                    );
             }
         }
     }
@@ -257,7 +274,17 @@ namespace MOAR.Patches
                     || zone.SpawnPoint.Categories == ESpawnCategoryMask.None
                     || zone.SpawnPoint.Categories.ContainPlayerCategory()
                 )
+                {
+                    if (
+                        zone.SpawnPoint.Categories.ContainPlayerCategory()
+                        && !zone.BotZone.IsNullOrDestroyed()
+                    )
+                    {
+                        zone.BotZone = null;
+                    }
                     continue;
+                }
+
                 // Plugin.LogSource.LogInfo("3");
                 var botzoneDoesNotExist = zone.BotZone.IsNullOrDestroyed();
                 // Plugin.LogSource.LogInfo("4");

@@ -12,9 +12,10 @@ namespace MOAR.Helpers
             return req;
         }
 
-        public static string AddBotSpawn()
+        public static string AddBotSpawn(string type)
         {
             var request = Methods.GetPlayersCoordinatesAndLevel();
+            request.type = type;
 
             var req = SPT.Common.Http.RequestHandler.PostJson(
                 "/moar/addBotSpawn",
@@ -24,36 +25,12 @@ namespace MOAR.Helpers
             return req.ToString(); // no need to parse bare strings
         }
 
-        public static string AddSniperSpawn()
+        public static string DeleteBotSpawn(string type)
         {
             var request = Methods.GetPlayersCoordinatesAndLevel();
-
-            var req = SPT.Common.Http.RequestHandler.PostJson(
-                "/moar/addSniperSpawn",
-                JsonConvert.SerializeObject(request)
-            );
-
-            return req.ToString(); // no need to parse bare strings
-        }
-
-        public static string DeleteBotSpawn()
-        {
-            var request = Methods.GetPlayersCoordinatesAndLevel();
-
+            request.type = type;
             var req = SPT.Common.Http.RequestHandler.PostJson(
                 "/moar/deleteBotSpawn",
-                JsonConvert.SerializeObject(request)
-            );
-
-            return req.ToString(); // no need to parse bare strings
-        }
-
-        public static string AddPlayerSpawn()
-        {
-            var request = Methods.GetPlayersCoordinatesAndLevel();
-
-            var req = SPT.Common.Http.RequestHandler.PostJson(
-                "/moar/addPlayerSpawn",
                 JsonConvert.SerializeObject(request)
             );
 

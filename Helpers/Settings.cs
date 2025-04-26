@@ -49,10 +49,14 @@ namespace MOAR.Helpers
         public static ConfigEntry<bool> randomRogueGroup;
         public static ConfigEntry<int> randomRogueGroupChance;
         public static ConfigEntry<bool> disableBosses;
-        public static ConfigEntry<KeyboardShortcut> DeleteBotSpawn;
-        public static ConfigEntry<KeyboardShortcut> AddBotSpawn;
+        public static ConfigEntry<KeyboardShortcut> DeleteScavSpawn;
+        public static ConfigEntry<KeyboardShortcut> DeleteSniperSpawn;
+        public static ConfigEntry<KeyboardShortcut> DeletePlayerSpawn;
+        public static ConfigEntry<KeyboardShortcut> DeletePmcSpawn;
+        public static ConfigEntry<KeyboardShortcut> AddScavSpawn;
         public static ConfigEntry<KeyboardShortcut> AddSniperSpawn;
         public static ConfigEntry<KeyboardShortcut> AddPlayerSpawn;
+        public static ConfigEntry<KeyboardShortcut> AddPmcSpawn;
 
         public static ConfigEntry<KeyboardShortcut> AnnounceKey;
         public static ConfigEntry<int> mainBossChanceBuff;
@@ -83,7 +87,7 @@ namespace MOAR.Helpers
                 "Faction Based Aggression On/Off",
                 false,
                 new ConfigDescription(
-                    "Makes it so PMCs aren't aggressive to their own faction, you know, like actual military contractors.",
+                    "Enabling this feature makes it so that AI PMCs from the same faction will not engage in combat with one another. You know, like actual military contractors. (This is client side only)",
                     null,
                     new ConfigurationManagerAttributes
                     {
@@ -709,12 +713,45 @@ namespace MOAR.Helpers
                 )
             );
 
-            AddBotSpawn = Config.Bind(
+            DeleteSniperSpawn = Config.Bind(
                 "4. Advanced",
-                "Add a bot spawn",
+                "Delete a sniper spawn",
                 new KeyboardShortcut(),
                 new ConfigDescription(
-                    "Hotkey to add a PMC/SCAV shared use spawn",
+                    "Hotkey to delete the nearest sniper spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            DeletePlayerSpawn = Config.Bind(
+                "4. Advanced",
+                "Delete a player spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to delete the nearest player starting spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            DeletePmcSpawn = Config.Bind(
+                "4. Advanced",
+                "Delete a pmc spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to delete the nearest pmc spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            DeleteScavSpawn = Config.Bind(
+                "4. Advanced",
+                "Delete a scav spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to delete the nearest scav spawn",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = true }
                 )
@@ -731,23 +768,34 @@ namespace MOAR.Helpers
                 )
             );
 
-            DeleteBotSpawn = Config.Bind(
-                "4. Advanced",
-                "Delete a bot spawn",
-                new KeyboardShortcut(),
-                new ConfigDescription(
-                    "Hotkey to remove nearest PMC/SCAV shared use spawn",
-                    null,
-                    new ConfigurationManagerAttributes { IsAdvanced = true }
-                )
-            );
-
             AddPlayerSpawn = Config.Bind(
                 "4. Advanced",
                 "Add a player spawn",
                 new KeyboardShortcut(),
                 new ConfigDescription(
                     "Hotkey to add a player starting spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            AddPmcSpawn = Config.Bind(
+                "4. Advanced",
+                "Add a pmc spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to add a pmc spawn",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdvanced = true }
+                )
+            );
+
+            AddScavSpawn = Config.Bind(
+                "4. Advanced",
+                "Add a scav spawn",
+                new KeyboardShortcut(),
+                new ConfigDescription(
+                    "Hotkey to add a scav spawn",
                     null,
                     new ConfigurationManagerAttributes { IsAdvanced = true }
                 )

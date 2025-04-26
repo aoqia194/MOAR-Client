@@ -4,7 +4,6 @@ using System.Text;
 using Comfort.Common;
 using EFT;
 using EFT.Game.Spawning;
-using MOAR.Helpers;
 using UnityEngine;
 
 namespace MOAR.Components;

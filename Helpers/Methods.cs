@@ -12,7 +12,8 @@ namespace MOAR.Helpers
             ENotificationIconType notificationType = ENotificationIconType.Quest
         )
         {
-            var currentMessage = new GClass2269(
+            // new GClass2314("AirplaneDelayMessage".Localized(null), ENotificationDurationType.Default, ENotificationIconType.Default, null)
+            var currentMessage = new GClass2314(
                 message,
                 ENotificationDurationType.Long,
                 notificationType

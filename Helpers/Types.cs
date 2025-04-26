@@ -9,6 +9,7 @@ namespace MOAR
 
     public class AddSpawnRequest
     {
+        public string type { get; set; }
         public string map { get; set; }
         public Ixyz position { get; set; }
     }

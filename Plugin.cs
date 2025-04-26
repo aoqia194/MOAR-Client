@@ -9,18 +9,18 @@ using MOAR.Patches;
 namespace MOAR
 {
     [
-        BepInPlugin("MOAR.settings", "MOAR", "3.0.1"),
+        BepInPlugin("MOAR.settings", "MOAR", "3.1.0"),
         BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)
     ]
     public class Plugin : BaseUnityPlugin
     {
         public static ManualLogSource LogSource;
 
-        private void Awake()
-        {
-            var harmony = new Harmony("com.example.botzonepatch");
-            harmony.PatchAll();
-        }
+        // private void Awake()
+        // {
+        //     var harmony = new Harmony("com.example.botzonepatch");
+        //     harmony.PatchAll();
+        // }
 
         private void Start()
         {
@@ -29,8 +29,10 @@ namespace MOAR
             Settings.Init(Config);
             Routers.Init(Config);
 
+            // new MarkerDumper().Enable();
             new SniperPatch().Enable();
             new AddEnemyPatch().Enable();
+            new RefreshLocation().Enable();
             if (Settings.enablePointOverlay.Value)
             {
                 new OnGameStartedPatch().Enable();
@@ -40,26 +42,75 @@ namespace MOAR
 
         private void Update()
         {
-            if (Settings.DeleteBotSpawn.Value.BetterIsDown())
+            if (Settings.DeleteSniperSpawn.Value.BetterIsDown())
             {
                 if (Singleton<GameWorld>.Instance.MainPlayer != null)
                 {
-                    Routers.DeleteBotSpawn();
+                    Routers.DeleteBotSpawn("sniper");
                     Methods.DisplayMessage(
-                        "Deleted 1 bot spawn point from "
+                        "Deleted 1 sniper spawn point from "
+                            + Singleton<GameWorld>.Instance.MainPlayer.Location,
+                        EFT.Communications.ENotificationIconType.Default
+                    );
+                }
+            }
+            if (Settings.DeletePmcSpawn.Value.BetterIsDown())
+            {
+                if (Singleton<GameWorld>.Instance.MainPlayer != null)
+                {
+                    Routers.DeleteBotSpawn("pmc");
+                    Methods.DisplayMessage(
+                        "Deleted 1 pmc spawn point from "
+                            + Singleton<GameWorld>.Instance.MainPlayer.Location,
+                        EFT.Communications.ENotificationIconType.Default
+                    );
+                }
+            }
+            if (Settings.DeleteScavSpawn.Value.BetterIsDown())
+            {
+                if (Singleton<GameWorld>.Instance.MainPlayer != null)
+                {
+                    Routers.DeleteBotSpawn("scav");
+                    Methods.DisplayMessage(
+                        "Deleted 1 scav spawn point from "
+                            + Singleton<GameWorld>.Instance.MainPlayer.Location,
+                        EFT.Communications.ENotificationIconType.Default
+                    );
+                }
+            }
+            if (Settings.DeletePlayerSpawn.Value.BetterIsDown())
+            {
+                if (Singleton<GameWorld>.Instance.MainPlayer != null)
+                {
+                    Routers.DeleteBotSpawn("player");
+                    Methods.DisplayMessage(
+                        "Deleted 1 player spawn point from "
                             + Singleton<GameWorld>.Instance.MainPlayer.Location,
                         EFT.Communications.ENotificationIconType.Default
                     );
                 }
             }
 
-            if (Settings.AddBotSpawn.Value.BetterIsDown())
+            if (Settings.AddPmcSpawn.Value.BetterIsDown())
             {
                 if (Singleton<GameWorld>.Instance.MainPlayer != null)
                 {
-                    Routers.AddBotSpawn();
+                    Routers.AddBotSpawn("pmc");
                     Methods.DisplayMessage(
-                        "Added 1 bot spawn point to "
+                        "Added 1 pmc spawn point to "
+                            + Singleton<GameWorld>.Instance.MainPlayer.Location,
+                        EFT.Communications.ENotificationIconType.Default
+                    );
+                }
+            }
+
+            if (Settings.AddScavSpawn.Value.BetterIsDown())
+            {
+                if (Singleton<GameWorld>.Instance.MainPlayer != null)
+                {
+                    Routers.AddBotSpawn("scav");
+                    Methods.DisplayMessage(
+                        "Added 1 scav spawn point to "
                             + Singleton<GameWorld>.Instance.MainPlayer.Location,
                         EFT.Communications.ENotificationIconType.Default
                     );
@@ -70,7 +121,7 @@ namespace MOAR
             {
                 if (Singleton<GameWorld>.Instance.MainPlayer != null)
                 {
-                    Routers.AddSniperSpawn();
+                    Routers.AddBotSpawn("sniper");
                     Methods.DisplayMessage(
                         "Added 1 sniper spawn point to "
                             + Singleton<GameWorld>.Instance.MainPlayer.Location,
@@ -83,7 +134,7 @@ namespace MOAR
             {
                 if (Singleton<GameWorld>.Instance.MainPlayer != null)
                 {
-                    Routers.AddPlayerSpawn();
+                    Routers.AddBotSpawn("player");
                     Methods.DisplayMessage(
                         "Added 1 player spawn point to "
                             + Singleton<GameWorld>.Instance.MainPlayer.Location,
