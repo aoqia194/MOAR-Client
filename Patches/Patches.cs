@@ -69,6 +69,9 @@ namespace MOAR.Patches
             EBotEnemyCause cause
         )
         {
+            if (cause != EBotEnemyCause.initial)
+                return true;
+
             if (__instance == null || person == null || !person.IsAI)
                 return true;
 
