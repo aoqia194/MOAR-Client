@@ -9,7 +9,7 @@ using MOAR.Patches;
 namespace MOAR
 {
     [
-        BepInPlugin("MOAR.settings", "MOAR", "3.1.0"),
+        BepInPlugin("MOAR.settings", "MOAR", "3.1.2"),
         BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)
     ]
     public class Plugin : BaseUnityPlugin
@@ -29,7 +29,7 @@ namespace MOAR
             Settings.Init(Config);
             Routers.Init(Config);
 
-            // new MarkerDumper().Enable();
+            new NoTeleportPatch().Enable();
             new SniperPatch().Enable();
             new AddEnemyPatch().Enable();
             new RefreshLocation().Enable();

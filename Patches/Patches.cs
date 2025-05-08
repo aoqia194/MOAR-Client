@@ -13,6 +13,32 @@ using UnityEngine;
 
 namespace MOAR.Patches
 {
+    internal class NoTeleportPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(
+                typeof(BotMover),
+                nameof(BotMover.GoToPoint),
+                [
+                    typeof(Vector3),
+                    typeof(bool),
+                    typeof(float),
+                    typeof(bool),
+                    typeof(bool),
+                    typeof(bool),
+                    typeof(bool),
+                ]
+            );
+        }
+
+        [PatchPrefix]
+        public static void PatchPrefix(ref bool mustHaveWay)
+        {
+            mustHaveWay = false;
+        }
+    }
+
     // MatchMakerAcceptScreen
     public class RefreshLocation : ModulePatch
     {
