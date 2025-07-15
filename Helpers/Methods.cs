@@ -1,3 +1,4 @@
+using System;
 using Comfort.Common;
 using EFT;
 using EFT.Communications;
@@ -24,9 +25,14 @@ namespace MOAR.Helpers
 
         public static async void RefreshLocationInfo()
         {
-            if (PatchConstants.BackEndSession != null)
-                await PatchConstants.BackEndSession.GetLevelSettings();
-            // await PatchConstants.BackEndSession.GetWeatherAndTime();
+            try {
+                if (PatchConstants.BackEndSession != null)
+                    await PatchConstants.BackEndSession.GetLevelSettings();
+                // await PatchConstants.BackEndSession.GetWeatherAndTime();
+            } catch (Exception e) {
+                Plugin.LogSource.LogError(
+                    "[HANDLED] General exception in RefreshLocationInfo");
+            }
         }
 
         public static AddSpawnRequest GetPlayersCoordinatesAndLevel()
